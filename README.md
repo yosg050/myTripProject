@@ -33,7 +33,7 @@ It utilizes a client-server architecture for robust functionality and scalabilit
 - React (Frontend)
 - Node.js (Backend)
 - Firebase Authentication
-- Firestore for data storage
+- MongoDB for data storage
 - Integration with external APIs (including Google APIs)
 - Client-server architecture
 
@@ -42,4 +42,4 @@ The application follows a client-server architecture:
 - Frontend: React-based client application
 - Backend: Node.js server
 - Authentication: Firebase Authentication
-- Database: Firestore
+- Database: MongoDB
