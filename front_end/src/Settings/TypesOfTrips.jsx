@@ -4,38 +4,87 @@ import { Button, Card, Form, InputGroup, Modal } from "react-bootstrap";
 import { IoRemoveCircleOutline } from "react-icons/io5";
 import { Trash3 } from "react-bootstrap-icons";
 import postUserSettings from "../services/postUserSettings";
+import PopupMessage from "../modals/PopupMessage";
 
 const TripTypes = () => {
-  const [customTripTypes, setCustomTripTypes] = useState([]);
-  const { userSettings, setUserSettings } = useUser();
+  // const [customTripTypes, setCustomTripTypes] = useState([]);
+  // const { userSettings, setUserSettings } = useUser();
+  const { userSettingsTripTypes, setUserSettingsTripTypes } = useUser();
   const [newTripType, setNewTripType] = useState("");
-  console.log(userSettings);
+  const [alertMessage, setAlertMessage] = useState({
+    id: 0,
+    variant: "",
+    message: "",
+  });
+  const [button, setButton] = useState(false);
+
+  // console.log(userSettings);
+
+  // useEffect(() => {
+  //   if (
+  //     userSettings?.userSettings?.typesOfTrips &&
+  //     userSettings.userSettings.typesOfTrips.length > 0
+  //   ) {
+  //     console.log(userSettings.userSettings.typesOfTrips);
+  //     setCustomTripTypes(userSettings.userSettings.typesOfTrips);
+  //   }
+  // }, []);
 
   useEffect(() => {
-    if (
-      userSettings?.userSettings?.typesOfTrips &&
-      Array.isArray(userSettings.userSettings.typesOfTrips) &&
-      userSettings.userSettings.typesOfTrips.length > 0
-    ) {
-      console.log(userSettings.userSettings.typesOfTrips);
-      setCustomTripTypes(userSettings.userSettings.typesOfTrips);
+    if (newTripType) {
+      setButton(true);
+    } else {
+      setButton(false);
     }
-  }, [userSettings]);
+  }, [newTripType]);
 
-  const addNewType = async() => {
-    const result = await postUserSettings(newTripType, "typesOfTrips");
-    if (result.success){
-      setUserSettings((prevSettings) => ({
-        ...prevSettings,
-        typesOfTrips: [
-          ...prevSettings.userSettings.typesOfTrips,
-          newTripType   //.trim(),
-        ],
-      }));
-      setCustomTripTypes((prevTypes) => [...prevTypes, newTripType]);
-      setNewTripType("")
-
+  const addNewType = async () => {
+    setButton(false);
+    const isValue = userSettingsTripTypes.includes(newTripType);
+    if (isValue) {
+      setAlertMessage({
+        id: Date.now(),
+        variant: "danger",
+        message: "ערך זה כבר קיים ברשימה",
+      });
+      setNewTripType("");
+      return;
     }
+
+      const result = await postUserSettings(newTripType, "typesOfTrips", "POST");
+      if (result.success) {
+        // setUserSettings((prevSettings) => ({
+        //   ...prevSettings,
+        //   typesOfTrips: [...prevSettings.userSettings.typesOfTrips, newTripType],
+        // }));
+        setUserSettingsTripTypes((prevTypes) => [...prevTypes, newTripType]);
+        setNewTripType("");
+      }
+    };
+
+    const deleteTripType = async (tripType) => {
+
+      setButton(false);
+      const result = await postUserSettings(tripType, "typesOfTrips", "DELETE");
+      if (result.success) {
+        // setUserSettings((prevSettings) => ({
+        //   ...prevSettings,
+        //   typesOfTrips: prevSettings.userSettings.typesOfTrips.filter(
+        //     (type) => type !== tripType
+        //   ),
+        // }));
+        setUserSettingsTripTypes((prevTypes) =>
+          prevTypes.filter((type) => type !== tripType)
+        );
+      } else {
+        setAlertMessage({
+          id: Date.now(),
+          variant: "danger",
+          message: "שגיאה",
+        });
+        setNewTripType("");
+        return;
+      }
   };
 
   return (
@@ -50,7 +99,14 @@ const TripTypes = () => {
       }}
     >
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
-        <p style={{ fontWeight: "bold", fontSize: "1.5em", lineHeight: "1" }}>
+        <p
+          style={{
+            fontWeight: "bold",
+            fontSize: "1.5em",
+            lineHeight: "1",
+            maxHeight: "200px",
+          }}
+        >
           קטגוריות
         </p>
         <p style={{ fontSize: "1em", lineHeight: "1" }}>
@@ -75,46 +131,54 @@ const TripTypes = () => {
         style={{
           display: "flex",
           justifyContent: "center",
-          direction: "rtl",
+          // direction: "rtl",
           flexDirection: "column ",
           alignItems: "center",
         }}
       >
-        {customTripTypes.map((tripType) => (
-          <Card
-            key={tripType}
-            style={{
-              width: "150px",
-              margin: "5px",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <span>{tripType}</span>
-            <Button
-              variant="link"
-              // onClick={removeType(tripType)}
-              style={{ color: "red" }}
+        {userSettingsTripTypes &&
+          userSettingsTripTypes.length > 0 &&
+          userSettingsTripTypes.map((tripType) => (
+            <Card
+              key={tripType}
+              style={{
+                width: "150px",
+                margin: "5px",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: "row",
+                paddingRight: "10px",
+              }}
             >
-              <Trash3 />
-            </Button>
-          </Card>
-        ))}
-        <InputGroup style={{ width: "300px", margin: "5px" }}>
+              <span>{tripType}</span>
+              <Button
+                variant="link"
+                style={{ color: "red" }}
+                onClick={() => deleteTripType(tripType)}
+              >
+                <Trash3 />
+              </Button>
+            </Card>
+          ))}
+        <InputGroup style={{ width: "300px", margin: "5px", direction: "ltr" }}>
+          <Button
+            variant="outline-secondary"
+            onClick={addNewType}
+            disabled={!button}
+          >
+            הוסף
+          </Button>
           <Form.Control
             placeholder="הוספת קטגוריה חדשה"
             value={newTripType}
             onChange={(e) => setNewTripType(e.target.value)}
           />
-          <Button
-            variant="outline-secondary"
-            onClick={addNewType}
-            disabled={!newTripType.trim()} // כפתור נלחץ רק אם יש ערך
-          >
-            הוסף
-          </Button>
         </InputGroup>
+        <PopupMessage
+          key={alertMessage.id}
+          variant={alertMessage.variant}
+          message={alertMessage.message}
+        />
       </div>
     </div>
   );

@@ -1,10 +1,11 @@
 import express from 'express';
 import getUserSettings from '../db/services/userSettings/getUserSettings.js';
 import postUserSittings from '../db/services/userSettings/postUserSettings.js';
+import deleteUserSittings from '../db/services/userSettings/deleteUserSettings.js';
 
 const router = express.Router();
 
-router.post('/postUserSetting', async (req, res) => {
+router.post('/UserSetting', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
@@ -20,7 +21,7 @@ router.post('/postUserSetting', async (req, res) => {
     }
 })
 
-router.get('/getUserSettings', async (req, res) => {
+router.get('/UserSettings', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
@@ -34,6 +35,23 @@ router.get('/getUserSettings', async (req, res) => {
         return res.status(200).json({ userSettings });
     } else {
         return res.status(400).json({ error: "No settings found" });
+    }
+})
+
+
+router.delete('/UserSetting', async (req, res) => {
+    if (!req.userId) {
+        return res.status(400).json({ error: "Missing values" });
+    }
+
+    const newSetting = await deleteUserSittings(req.userId, req.body)
+     // , newSetting.message
+
+    if (newSetting) {
+        
+        return res.status(200).json({ success: true, message: "data added successfully" });
+    } else {
+        return res.status(400).json({ success: false, message: "Failed to add data" });
     }
 })
 

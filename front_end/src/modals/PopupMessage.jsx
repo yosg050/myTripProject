@@ -3,7 +3,7 @@ import Alert from "react-bootstrap/Alert";
 
 function PopupMessage({ variant, message }) {
   const [show, setShow] = useState(false);
-  const duration = 2000;
+  const duration = 1000;
 
   useEffect(() => {
     if (message) {
@@ -21,6 +21,7 @@ function PopupMessage({ variant, message }) {
     <>
       <Alert
         style={{
+          
           top: "10px",
           zIndex: 1050,
         }}

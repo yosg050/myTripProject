@@ -1,12 +1,12 @@
 import { LOCAL_SERVER_URL } from "../../config";
 
-const postUserSettings = async (newTarget, array) => {
+const postUserSettings = async (newTarget, array, methodType) => {
   if (newTarget) {
     try {
       const response = await fetch(
-        `http://${LOCAL_SERVER_URL}/userSettings/postUserSetting`,
+        `http://${LOCAL_SERVER_URL}/userSettings/UserSetting`,
         {
-          method: "POST",
+          method: methodType,
           headers: {
             "Content-Type": "application/json",
           },
@@ -39,4 +39,32 @@ const postUserSettings = async (newTarget, array) => {
 };
 
 export default postUserSettings;
+
+// import { LOCAL_SERVER_URL } from "../../config";
+
+// export const getUserSettings = async () => {
+//   try {
+//     const response = await fetch(
+//       `http://${LOCAL_SERVER_URL}/userSettings/UserSettings`,
+//       {
+//         method: "DELETE",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         credentials: "include",
+//       }
+//     );
+
+
+//     if (!response.ok) {
+//       throw new Error(`Error: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     return data; 
+//   } catch (error) {
+//     console.error('Error fetching user locations:', error);
+//     throw error;
+//   }
+// };
 

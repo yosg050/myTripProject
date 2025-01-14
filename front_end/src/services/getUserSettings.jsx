@@ -3,7 +3,7 @@ import { LOCAL_SERVER_URL } from "../../config";
 export const getUserSettings = async () => {
   try {
     const response = await fetch(
-      `http://${LOCAL_SERVER_URL}/userSettings/getUserSettings`,
+      `http://${LOCAL_SERVER_URL}/userSettings/UserSettings`,
       {
         method: "GET",
         headers: {
@@ -21,7 +21,7 @@ export const getUserSettings = async () => {
     const data = await response.json();
     return data; 
   } catch (error) {
-    console.error('Error fetching user locations:', error);
+    console.error('Error fetching user data:', error);
     throw error;
   }
 };

@@ -7,25 +7,27 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
   const [arrayDbTypes, setArrayDbTypes] = useState([]);
   const [selectedTripTypes, setSelectedTripTypes] = useState([]);
   const [notes, setNotes] = useState("");
-  const { userSettings, setUserLocations} = useUser();
+  // const { userSettings, setUserLocations} = useUser();
+  const { userSettingsTripTypes, setUserSettingsTripTypes } = useUser();
 
-  useEffect(() => {
-    if (
-      userSettings?.userSettings?.typesOfTrips &&
-      Array.isArray(userSettings.userSettings.typesOfTrips) &&
-      userSettings.userSettings.typesOfTrips.length > 0
-    ) {
-      console.log(userSettings.userSettings.typesOfTrips);
-      setArrayDbTypes(userSettings.userSettings.typesOfTrips);
-    }
-  }, [userSettings]);
+  // useEffect(() => {
+  //   if (
+  //     userSettings?.userSettings?.typesOfTrips &&
+  //     Array.isArray(userSettings.userSettings.typesOfTrips) &&
+  //     userSettings.userSettings.typesOfTrips.length > 0
+  //   ) {
+  //     console.log(userSettings.userSettings.typesOfTrips);
+  //     setArrayDbTypes(userSettings.userSettings.typesOfTrips);
+  //   }
+  // }, [userSettings]);
 
   const handleTripTypeChange = (tripType, isChecked) => {
     if (isChecked) {
       setSelectedTripTypes((prev) => [...prev, tripType]);
-    } else {
-      setSelectedTripTypes((prev) => prev.filter((type) => type !== tripType));
     }
+    // else {
+    //   setSelectedTripTypes((prev) => prev.filter((type) => type !== tripType));
+    // }
   };
 
   const handleAddLocation = async () => {
@@ -38,8 +40,10 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
     const result = await addLocationToUser(updatedPlace);
     if (result.success) {
       onLocationAdded?.({ success: true });
-      setUserLocations((prevLocations) => [...prevLocations, updatedPlace ]);
-
+      setUserSettingsTripTypes((prevLocations) => [
+        ...prevLocations,
+        updatedPlace,
+      ]);
     } else {
       onLocationAdded?.({ success: false });
     }
@@ -110,18 +114,20 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
                 width: "40%",
               }}
             >
-              {arrayDbTypes.map((tripType) => (
-                <Form.Check
-                  key={tripType}
-                  type="switch"
-                  id={`trip-type-${tripType}`}
-                  label={tripType}
-                  checked={selectedTripTypes.includes(tripType)}
-                  onChange={(e) =>
-                    handleTripTypeChange(tripType, e.target.checked)
-                  }
-                />
-              ))}
+              {
+                userSettingsTripTypes.length > 0 &&
+                userSettingsTripTypes.map((tripType) => (
+                  <Form.Check
+                    key={tripType}
+                    type="switch"
+                    id={`trip-type-${tripType}`}
+                    label={tripType}
+                    checked={selectedTripTypes.includes(tripType)}
+                    onChange={(e) =>
+                      handleTripTypeChange(tripType, e.target.checked)
+                    }
+                  />
+                ))}
             </Col>
           </Row>
           <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">

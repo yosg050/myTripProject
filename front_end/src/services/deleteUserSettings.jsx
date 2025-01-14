@@ -3,7 +3,7 @@ import { LOCAL_SERVER_URL } from "../../config";
 export const getUserSettings = async () => {
   try {
     const response = await fetch(
-      `http://${LOCAL_SERVER_URL}/userSettings/getUserSettings`,
+      `http://${LOCAL_SERVER_URL}/userSettings/UserSettings`,
       {
         method: "DELETE",
         headers: {

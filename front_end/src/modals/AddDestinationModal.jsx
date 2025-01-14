@@ -8,10 +8,10 @@ import useHandlePlaceSelect from "./useHandlePlaceSelect";
 
 const AddDestinationModal = ({ show, onHide }) => {
   const isMobile = useMobile();
- 
 
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [alertMessage, setAlertMessage] = useState({
+    id: 0,
     variant: "",
     message: "",
   });
@@ -19,16 +19,16 @@ const AddDestinationModal = ({ show, onHide }) => {
 
   const handleClose = () => {
     setSelectedPlace(null);
-    setAlertMessage({ variant: "", message: "" });
+    // setAlertMessage({ variant: "", message: "" });
     onHide();
   };
 
   const placeCheck = (place) => {
-    
     setTimeout(() => {
       const check = handlePlaceSelect(place);
       if (!check) {
         setAlertMessage({
+          id: Date.now(), 
           variant: "danger",
           message: ` יש לך כבר את היעד ${place.name} `,
         });
@@ -40,20 +40,22 @@ const AddDestinationModal = ({ show, onHide }) => {
 
   const handleInputChange = () => {
     setSelectedPlace(null);
-    setAlertMessage({ variant: "", message: "" });
+    // setAlertMessage({ variant: "", message: "" });
   };
 
   const handleLocationAdded = (result) => {
     if (result.success) {
       setAlertMessage({
+        id: Date.now(), 
         variant: "success",
         message: "היעד נוסף בהצלחה",
       });
       // refreshUserData()
-      
+
       setSelectedPlace(null);
     } else {
       setAlertMessage({
+        id: Date.now(), 
         variant: "danger",
         message: "הוספת היעד נכשלה",
       });
@@ -86,7 +88,7 @@ const AddDestinationModal = ({ show, onHide }) => {
           </Row>
           <Row>
             <PopupMessage
-           
+              key={alertMessage.id}
               variant={alertMessage.variant}
               message={alertMessage.message}
             />

@@ -8,17 +8,20 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProfile = ({ children }) => {
   const [userLocations, setUserLocations] = useState(null);
+
   const [userSettings, setUserSettings] = useState(null);
+
+  const [userSettingsTripTypes, setUserSettingsTripTypes] = useState(null);
+  const [userSettingsChildren, setUserSettingsChildren] = useState(null);
+  const [userSettingsSelectedPlaces, setUserSettingsSelectedPlaces] =
+    useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchUserDataWiteToken = async () => {
-
-    
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      
       setLoading(false);
       return;
     }
@@ -29,8 +32,18 @@ export const UserProfile = ({ children }) => {
       setUserLocations(userLocations.locations);
 
       const userSettings = await getUserSettings();
-      console.log(userSettings);
+
       setUserSettings(userSettings);
+ 
+      if (userSettings?.userSettings) {
+        setUserSettingsTripTypes(userSettings.userSettings.typesOfTrips);
+        setUserSettingsChildren(userSettings.userSettings.selectedPlaces);
+        setUserSettingsSelectedPlaces(userSettings.userSettings.children);
+      }
+        console.log(userSettings);
+        console.log(userSettingsTripTypes);
+        console.log(userSettingsChildren);
+        console.log(userSettingsSelectedPlaces);
 
       setError(null);
     } catch (error) {
@@ -53,10 +66,16 @@ export const UserProfile = ({ children }) => {
       value={{
         userLocations,
         userSettings,
+        userSettingsTripTypes,
+        userSettingsChildren,
+        userSettingsSelectedPlaces,
         loading,
         error,
         setUserLocations,
         setUserSettings,
+        setUserSettingsTripTypes,
+        setUserSettingsChildren,
+        setUserSettingsSelectedPlaces,
         refreshUserData,
       }}
     >
