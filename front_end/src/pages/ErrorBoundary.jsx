@@ -17,6 +17,8 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      console.log(this.state.hasError);
+      
       return <h1>משהו השתבש. אנא רענן את הדף או נסה שוב מאוחר יותר.</h1>;
     }
 

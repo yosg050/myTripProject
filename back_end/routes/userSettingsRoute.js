@@ -43,7 +43,7 @@ router.delete('/UserSetting', async (req, res) => {
         return res.status(400).json({ error: "Missing values" });
     }
 
-    const newSetting = await deleteUserSittingsdeleteUserSittings(req.userId, req.body)
+    const newSetting = await deleteUserSittings(req.userId, req.body)
     if (newSetting) {
         
         return res.status(200).json({ success: true, message: "data added successfully" });
