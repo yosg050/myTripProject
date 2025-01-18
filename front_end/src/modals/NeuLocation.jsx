@@ -1,33 +1,22 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useUser } from "../connections/UserProfile";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import addLocationToUser from "../services/postUserLocation";
 
 const NewLocation = ({ newPlace, onLocationAdded }) => {
   const [arrayDbTypes, setArrayDbTypes] = useState([]);
   const [selectedTripTypes, setSelectedTripTypes] = useState([]);
   const [notes, setNotes] = useState("");
-  // const { userSettings, setUserLocations} = useUser();
   const { userSettingsTripTypes, setUserSettingsTripTypes } = useUser();
 
-  // useEffect(() => {
-  //   if (
-  //     userSettings?.userSettings?.typesOfTrips &&
-  //     Array.isArray(userSettings.userSettings.typesOfTrips) &&
-  //     userSettings.userSettings.typesOfTrips.length > 0
-  //   ) {
-  //     console.log(userSettings.userSettings.typesOfTrips);
-  //     setArrayDbTypes(userSettings.userSettings.typesOfTrips);
-  //   }
-  // }, [userSettings]);
+  console.log("userSettingsTripTypes: " , userSettingsTripTypes);
 
   const handleTripTypeChange = (tripType, isChecked) => {
     if (isChecked) {
       setSelectedTripTypes((prev) => [...prev, tripType]);
+    } else {
+      setSelectedTripTypes((prev) => prev.filter((type) => type !== tripType));
     }
-    // else {
-    //   setSelectedTripTypes((prev) => prev.filter((type) => type !== tripType));
-    // }
   };
 
   const handleAddLocation = async () => {
@@ -40,10 +29,6 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
     const result = await addLocationToUser(updatedPlace);
     if (result.success) {
       onLocationAdded?.({ success: true });
-      setUserSettingsTripTypes((prevLocations) => [
-        ...prevLocations,
-        updatedPlace,
-      ]);
     } else {
       onLocationAdded?.({ success: false });
     }
@@ -114,8 +99,8 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
                 width: "40%",
               }}
             >
-              {
-                userSettingsTripTypes.length > 0 &&
+              {userSettingsTripTypes.length > 0 &&
+                Array.isArray(userSettingsTripTypes) &&
                 userSettingsTripTypes.map((tripType) => (
                   <Form.Check
                     key={tripType}

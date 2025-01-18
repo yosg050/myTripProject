@@ -43,8 +43,8 @@ function MyMap({
   const updateMapSize = useCallback(() => {
     if (mapContainerRef.current) {
       const { offsetWidth } = mapContainerRef.current.parentElement;
-      const windowHeight = window.innerHeight;
-      const bottomMargin = 1;
+      // const windowHeight = window.innerHeight;
+      // const bottomMargin = 1;
 
       setMapSize({
         width: `${offsetWidth}px`,
@@ -151,21 +151,6 @@ function MyMap({
             <div >מיקום נוכחי</div>
           </Popup>
         )}
-        {/* <div
-          style={{
-            position: "absolute",
-            top: 10,
-            left: 10,
-            padding: "5px",
-            backgroundColor: "white",
-            boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-            zIndex: 1,
-            textAlign: "end",
-          }}
-        >
-          <p style={{ marginBottom: "0px" , lineHeight: "0.9",}}>שינוי נקודת מוצא</p>
-          <AutocompleteInput onPlaceSelect={handlePlaceSelect} />
-        </div> */}
       </Map>
       <LocationModal
         show={showModal}

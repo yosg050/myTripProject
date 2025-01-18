@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         immutable: true
     },
     firstName: { type: String, default: null },
-    latName: { type: String, default: null },
+    lastName: { type: String, default: null },
     birthDate: { type: String, default: null },
     gender: { type: String, default: null },
     maritalStatus: { type: String, default: null },

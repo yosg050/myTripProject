@@ -1,11 +1,12 @@
 import express from 'express';
-import getUserLocations from '../db/services/locations/getUserLocations.js';
-import getUserSettings from '../db/services/userSettings/getUserSettings.js';
+
 import getUser from '../db/services/users/getUser.js';
 import firebaseAuth from '../services/authentication/firebaseAuth.js';
 import newUserCreate from '../db/services/users/newUserCreate.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import getUserDetails from '../db/services/users/getUserDetails.js';
+import putUserDetails from '../db/services/users/putUserDetails.js';
 dotenv.config();
 
 const router = express.Router();
@@ -29,24 +30,46 @@ router.get('/user', async (req, res) => {
 
         }
     }
-
     const payload = { uid: user._uid, email: user.email }
     const secret = process.env.JWT_TOKEN;
     const options = { expiresIn: process.env.JWT_EXPIRES_IN };
     const token = jwt.sign(payload, secret, options)
 
-    // const userLocations = await getUserLocations(user._id, user.email);
-    // const userSettings = await getUserSettings(user._id, user.email);
-
-    // if (!userSettings) {
-    //     return res.status(500).json({ error: "Failed to fetch user userSettings" });
-    // } if (!userLocations) {
-    //     return res.status(500).json({ error: "Failed to fetch user userLocations" });
-    // } else {
-    //     res.status(200).json({user: user.email, userSettings, userLocations});
-    // }
     res.cookie('token', token, { httpOnly: true, secure: false });
-    res.status(200).json({ token })     //({userLocations, userSettings });
+    res.status(200).json({ token })
 });
+
+router.get('/details', async (req, res) => {
+    if (!req.userId) {
+        return res.status(400).json({ error: "Missing values" });
+    }
+    // console.log(req.body);
+
+    const userData = await getUserDetails(req.userId)
+
+    if (userData) {
+        console.log("Date request successfully received");
+
+        return res.status(200).json({ userData });
+    } else {
+        return res.status(400).json({ error: "No data found" });
+    }
+})
+
+router.put('/details', async (req, res) => {
+    if (!req.userId) {
+        return res.status(400).json({ error: "Missing values" });
+    }
+
+    const userData = await putUserDetails(req.userId, req.body)
+
+    if (userData.success) {
+        console.log("Date request successfully put");
+
+        return res.status(200).json(userData);
+    } else {
+        return res.status(400).json({ error: "No data put" });
+    }
+})
 
 export default router

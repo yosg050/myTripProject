@@ -4,58 +4,81 @@ import React, { useState } from "react";
 import useMobile from "../components/UseMobile";
 import PopupMessage from "./PopupMessage";
 import NewLocation from "./NeuLocation";
-import useHandlePlaceSelect from "./useHandlePlaceSelect";
+import { useUser } from "../connections/UserProfile";
 
 const AddDestinationModal = ({ show, onHide }) => {
+  const { userLocations, setUserLocations } = useUser();
   const isMobile = useMobile();
-
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [alertMessage, setAlertMessage] = useState({
     id: 0,
     variant: "",
     message: "",
   });
-  const handlePlaceSelect = useHandlePlaceSelect();
+
+  React.useEffect(() => {
+    if (show) {
+      setAlertMessage({ id: 0, variant: "", message: "" });
+    }
+  }, [show]);
 
   const handleClose = () => {
     setSelectedPlace(null);
-    // setAlertMessage({ variant: "", message: "" });
+    setAlertMessage({ id: 0, variant: "", message: "" });
     onHide();
   };
 
+  console.log(userLocations);
+
   const placeCheck = (place) => {
-    setTimeout(() => {
-      const check = handlePlaceSelect(place);
-      if (!check) {
-        setAlertMessage({
-          id: Date.now(), 
-          variant: "danger",
-          message: ` יש לך כבר את היעד ${place.name} `,
-        });
-      } else {
-        setSelectedPlace(place);
-      }
-    }, 0);
+    if (!place || !place.place_id) return;
+    const check = userLocations.some(
+      (location) => location.id === place.place_id
+    );
+    if (check) {
+      setAlertMessage({
+        id: Date.now(),
+        variant: "danger",
+        message: ` יש לך כבר את היעד ${place.name} `,
+      });
+    } else {
+      setSelectedPlace(place);
+    }
   };
 
   const handleInputChange = () => {
     setSelectedPlace(null);
-    // setAlertMessage({ variant: "", message: "" });
   };
 
   const handleLocationAdded = (result) => {
-    if (result.success) {
+    if (!result.success || !selectedPlace) return;
+
+    try {
+      const temporaryValue = {
+        id: selectedPlace.place_id,
+        address: selectedPlace.address || "",
+        latitude: selectedPlace.latitude || 0,
+        longitude: selectedPlace.longitude || 0,
+        name: selectedPlace.name || "",
+        notes: selectedPlace.notes || "",
+        tripTypes: Array.isArray(selectedPlace.tripTypes)
+          ? selectedPlace.tripTypes
+          : [selectedPlace.tripTypes].filter(Boolean),
+        visit: false,
+        createdDate: Date.now(),
+      };
+
       setAlertMessage({
-        id: Date.now(), 
+        id: Date.now(),
         variant: "success",
         message: "היעד נוסף בהצלחה",
       });
-      // refreshUserData()
-
+      setUserLocations((prev) => [...prev, temporaryValue]);
       setSelectedPlace(null);
-    } else {
+    } catch (error) {
+      console.error("Error adding location:", error);
       setAlertMessage({
-        id: Date.now(), 
+        id: Date.now(),
         variant: "danger",
         message: "הוספת היעד נכשלה",
       });
@@ -87,11 +110,13 @@ const AddDestinationModal = ({ show, onHide }) => {
             </Col>
           </Row>
           <Row>
-            <PopupMessage
-              key={alertMessage.id}
-              variant={alertMessage.variant}
-              message={alertMessage.message}
-            />
+            {alertMessage.message && (
+              <PopupMessage
+                key={alertMessage.id}
+                variant={alertMessage.variant}
+                message={alertMessage.message}
+              />
+            )}
           </Row>
           {selectedPlace && (
             <NewLocation

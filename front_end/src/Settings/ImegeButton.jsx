@@ -14,8 +14,8 @@ const ProfileButton = () => {
   const { user, logout } = useAuth();
   const [profileData, setProfileData] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
-  //   const [imageError, setImageError] = useState(false);
 
+  //const [imageError, setImageError] = useState(false);
   // const { userData: userProfileData } = useUserProfile();
 
   // useEffect(() => {
@@ -66,7 +66,7 @@ const ProfileButton = () => {
             <Dropdown.ItemText className="text-center font-weight-bold">
               {profileData?.lastName && profileData.firstName
                 ? `${profileData.firstName} ${profileData.lastName}`
-                : profileData?.displayName || user?.email}
+                : profileData?.displayName || user?.displayName}
               <Dropdown.Divider />
             </Dropdown.ItemText>
             <Dropdown.Item className="text-center">

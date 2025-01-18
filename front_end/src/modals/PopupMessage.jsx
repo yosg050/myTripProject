@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Alert from "react-bootstrap/Alert";
 
 function PopupMessage({ variant, message }) {
+  
   const [show, setShow] = useState(false);
   const duration = 1000;
 

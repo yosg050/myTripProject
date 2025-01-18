@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getUserLocations } from "../services/getUserLocations";
 import { getUserSettings } from "../services/getUserSettings";
+import { getUserDetails } from "../services/getUserDetails";
+// import UserSettings from "../services/userSettings";
 
 const UserContext = createContext();
 
@@ -10,7 +12,7 @@ export const UserProfile = ({ children }) => {
   const [userLocations, setUserLocations] = useState(null);
 
   const [userSettings, setUserSettings] = useState(null);
-
+  const [userDetails, setUserDetails] = useState(null);
   const [userSettingsTripTypes, setUserSettingsTripTypes] = useState(null);
   const [userSettingsChildren, setUserSettingsChildren] = useState(null);
   const [userSettingsSelectedPlaces, setUserSettingsSelectedPlaces] =
@@ -31,19 +33,27 @@ export const UserProfile = ({ children }) => {
 
       setUserLocations(userLocations.locations);
 
+      const userDetails = await getUserDetails();
+      console.log(userDetails);
+
+      setUserDetails(userDetails);
+
+
       const userSettings = await getUserSettings();
+      //  const userSettings = await UserSettings('GET');
 
       setUserSettings(userSettings);
- 
+
       if (userSettings?.userSettings) {
         setUserSettingsTripTypes(userSettings.userSettings.typesOfTrips);
         setUserSettingsChildren(userSettings.userSettings.selectedPlaces);
         setUserSettingsSelectedPlaces(userSettings.userSettings.children);
       }
-        console.log(userSettings);
-        console.log(userSettingsTripTypes);
-        console.log(userSettingsChildren);
-        console.log(userSettingsSelectedPlaces);
+      
+      console.log(userSettings);
+      console.log(userSettingsTripTypes);
+      console.log(userSettingsChildren);
+      console.log(userSettingsSelectedPlaces);
 
       setError(null);
     } catch (error) {
@@ -64,6 +74,7 @@ export const UserProfile = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
+        userDetails, 
         userLocations,
         userSettings,
         userSettingsTripTypes,
@@ -71,11 +82,13 @@ export const UserProfile = ({ children }) => {
         userSettingsSelectedPlaces,
         loading,
         error,
+        setUserDetails,
         setUserLocations,
         setUserSettings,
         setUserSettingsTripTypes,
         setUserSettingsChildren,
         setUserSettingsSelectedPlaces,
+
         refreshUserData,
       }}
     >

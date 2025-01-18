@@ -17,16 +17,6 @@ const getUserConnect = async (uid, email) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // if (response.ok) {
-    //   const data = await response.json();
-    //   if (data.token) {
-    //     localStorage.setItem("authToken", data.token);
-    //     // console.log("authToken", data.token);
-    //   }
-
-    //   return data;
-    // }
-
     console.log("Failed to fetch user");
     return { error: "Failed to fetch user" };
   } catch (error) {

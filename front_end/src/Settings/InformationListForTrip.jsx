@@ -118,36 +118,3 @@ export default function InformationListForTrip() {
     </div>
   );
 }
-
-// return (
-//   <div style={styles.container}>
-//     <div style={styles.header}>
-//       <h2>בחר מקומות</h2>
-//       <p>בחר ביעדי סוגי טיולים</p>
-//     </div>
-//     <div style={styles.checkboxContainer}>
-//       <Form>
-//         <div style={styles.checkboxList}>
-//           {placesDataSingle.map(({ hebrew, english }) => (
-//             <div key={english} style={styles.checkboxItem}>
-//               <Form.Check
-//                 type="switch"
-//                 id={english}
-//                 checked={selectedPlaces[english] || false}
-//                 label={hebrew}
-//                 onChange={(e) =>
-//                   handleCheckboxChange(english, e.target.checked)
-//                 }
-//                 reverse
-//               />
-//             </div>
-//           ))}
-//         </div>
-//       </Form>
-//     </div>
-//     <Modal.Footer style={styles.footer}>
-//       <Button onClick={saveToFirestore}>שמור העדפות</Button>
-//     </Modal.Footer>
-//   </div>
-// );
-// }

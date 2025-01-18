@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
 import { Plus } from "react-bootstrap-icons";
-import { useAuth } from "../connections/AuthContext";
-import { useUserProfile } from "../connections/GetUserDate";
-import generateKewWords from "../DB/generatKewWords";
+import { useUser } from "../connections/UserProfile";
+import UserDetails from "../services/userDetails";
+import PopupMessage from "../modals/PopupMessage";
 
 function UserStatus() {
   const [children, setChildren] = useState([]);
@@ -16,24 +14,30 @@ function UserStatus() {
     gender: "",
     maritalStatus: "",
   });
-  const { user } = useAuth();
 
-  const { userData: userProfileData, loading, error } = useUserProfile();
+  const {
+    userDetails,
+    setUserDetails,
+    userSettingsChildren,
+    setUserSettingsChildren,
+  } = useUser();
+  const [alertMessage, setAlertMessage] = useState({
+    id: 0,
+    variant: "",
+    message: "",
+  });
 
   useEffect(() => {
-    if (userProfileData) {
-      setUserData({
-        firstName: userProfileData.firstName || "",
-        lastName: userProfileData.lastName || "",
-        // email: userProfileData.userEmail || user.email,
-        birthDate: userProfileData.birthDate || "",
-        gender: userProfileData.gender || "",
-        maritalStatus: userProfileData.maritalStatus || "",
-      });
+    setUserData({
+      firstName: userDetails.userData.firstName || "",
+      lastName: userDetails.userData.lastName || "",
+      birthDate: userDetails.userData.birthDate || "",
+      gender: userDetails.userData.gender || "",
+      maritalStatus: userDetails.userData.maritalStatus || "",
+    });
 
-      setChildren(userProfileData.children || []);
-    }
-  }, [userProfileData]);
+    setChildren(userSettingsChildren || []);
+  }, [userDetails, userSettingsChildren]);
 
   const addChild = () => {
     setChildren([...children, { name: "", birthDate: "" }]);
@@ -50,37 +54,61 @@ function UserStatus() {
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const saveToFirestore = async () => {
-    if (!user) {
-      console.error("No user logged in");
-      return;
-    }
- const fullName = userData.firstName+ " " + userData.lastName;
-    try {
-      const userDocRef = doc(db, "Users", user.uid);
-      {
-        await setDoc(
-          userDocRef,
-          {
-            ...userData,
-            children,
-            lastUpdated: new Date(),
-            keywords: arrayUnion(
-              ...generateKewWords(fullName),
-            ),
-          },
-          { merge: true }
-        );
+  const saveToDB = async () => {
+    console.log(userData);
+    console.log(userDetails.userData);
+
+    const updatedFields = {};
+    for (let key in userData) {
+      console.log(
+        "userData: ",
+        userData[key],
+        "userDetails.userData: ",
+        userDetails.userData[key]
+      );
+
+      if (
+        userData[key] !== userDetails.userData[key] &&
+        !(userData[key] === "" && userDetails.userData[key] === null)
+      ) {
+        updatedFields[key] = userData[key];
       }
-
-      console.log("User data saved successfully");
-    } catch (error) {
-      console.error("Error saving user data:", error);
     }
-  };
+    // console.log("updatedFields ", updatedFields);
 
-  if (loading) return <div>טוען...</div>;
-  if (error) return <div>שגיאה בטעינת הנתונים: {error.message}</div>;
+    if (Object.keys(updatedFields).length > 0) {
+      const result = await UserDetails("PUT", updatedFields);
+      if (result.success == true) {
+        console.log("result.success");
+
+        const newUserDetails = {
+          ...userDetails,
+          userData: {
+            ...userDetails.userData,
+            ...updatedFields
+          }
+        };
+        
+        setUserDetails(newUserDetails);
+        const updatedFields = {};
+        setAlertMessage({
+          id: Date.now(),
+          variant: "success",
+          message: "השינויים התעדכנו בהצלחה",
+        });
+
+        setUserData(prevUserData => ({
+          ...prevUserData,
+          ...updatedFields
+        }));
+      } else {
+        setAlertMessage({
+          id: Date.now(),
+          variant: "danger",
+          message: "העדכון נכשל",
+        });
+      }
+    }}
 
   return (
     <div
@@ -130,18 +158,6 @@ function UserStatus() {
                 />
               </Form.Group>
             </Col>
-            {/* <Col lg={4} md={12} className="mb-3">
-              <Form.Group controlId="userEmail">
-                <Form.Label>מייל</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="הוסף כתובת מייל"
-                  name="userEmail"
-                  value={userData.userEmail}
-                  onChange={handleInputChange}
-                />
-              </Form.Group>
-            </Col> */}
           </Row>
 
           <Row>
@@ -239,8 +255,13 @@ function UserStatus() {
           textAlign: "center",
         }}
       >
-        <Button onClick={saveToFirestore}>שמור פרטים</Button>
+        <Button onClick={saveToDB}>שמור שינויים</Button>
       </div>
+      <PopupMessage
+        key={alertMessage.id}
+        variant={alertMessage.variant}
+        message={alertMessage.message}
+      />
     </div>
   );
 }

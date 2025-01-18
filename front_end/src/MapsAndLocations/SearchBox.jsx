@@ -29,7 +29,7 @@ const AutocompleteInput = ({ onPlaceSelect, text, onInputChange }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       if (data && Array.isArray(data.predictions)) {
         setPredictions(data.predictions);
@@ -56,7 +56,7 @@ const AutocompleteInput = ({ onPlaceSelect, text, onInputChange }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
 
       const newTarget = {
         name: data.result.name,

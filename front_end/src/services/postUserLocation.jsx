@@ -22,7 +22,6 @@ const addLocationToUser = async (newTarget) => {
             longitude: newTarget.longitude,
             tripTypes: newTarget.tripTypes,
             notes: newTarget.notes,
-            // addedAt: newTarget.addedAt,
           }),
         }
       );

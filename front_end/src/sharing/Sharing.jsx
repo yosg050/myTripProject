@@ -39,7 +39,7 @@ const Sharing = ({ location }) => {
   };
 
   const handleDelete = () => {
-    console.log(location);
+    // console.log(location);
     sharingStart();
     handleShow();
   };
@@ -62,7 +62,7 @@ const Sharing = ({ location }) => {
     console.log(usersSend[0].firstName);
     setResults([]);
 
-    console.log(selectedUser, location );
+    // console.log(selectedUser, location );
     // return <div style={{backgroundColor: '#F5F5F5' }}>
     //   {selectedUser. firstName } {selectedUser.lastName} <br />
     //   {selectedUser.email}

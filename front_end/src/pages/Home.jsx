@@ -31,12 +31,12 @@ const Home = () => {
   const isMobile = useMobile();
   const overlayTrigger = () => (isMobile ? "top" : "left");
   const [transportMode, setTransportMode] = useState(1);
-  const [locationsFiltered, setLocationsFiltered] = useState([]);
   const [showAddDestination, setShowAddDestination] = useState(false);
   const [showTargetSearch, setShowTargetSearch] = useState(false);
   const [showFilterUI, setShowFilterUI] = useState(false);
   const [activeFilter, setActiveFilter] = useState(null);
   const [filterParams, setFilterParams] = useState({});
+  const [locationsFiltered, setLocationsFiltered] = useState([]);
   const listLocations = "היעדים שלי";
   const choiceLocations = "בחירת יעד מתאים";
   const [title, setTitle] = useState(listLocations);
@@ -44,7 +44,7 @@ const Home = () => {
 
   const {
     userLocations,
-    // userSettings,
+    setUserLocations,
     loading: userDataLoading,
     error: userDataError,
   } = useUser();

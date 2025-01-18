@@ -12,13 +12,12 @@ import locationsRoute from './routes/locationsRoute.js';
 import user from './routes/usersRoute.js';
 import userLocationsRoute from './routes/userLocationsRoute.js';
 import userSettingsRoute from './routes/userSettingsRoute.js'
+console.log("turns ", Date.now());
 
 
-connectToDatabase()
-firebaseConfig()
 
 const app = express();
-const PORT = 4953 || 5000;
+const PORT = 4953;
 console.log(PORT);
 app.use(express.json());
 app.use(cors({
@@ -27,12 +26,19 @@ app.use(cors({
 }))
 app.use(cookieParser());
 
+connectToDatabase()
+console.log("connectToDatabase", Date.now());
+firebaseConfig()
+console.log("firebaseConfig", Date.now());
+
+
 app.use('/login', user)
 
 
-app.use('/locations',tokenAuth, locationsRoute)
+app.use('/locations', tokenAuth, locationsRoute)
 app.use('/userLocations', tokenAuth, userLocationsRoute)
 app.use('/userSettings', tokenAuth, userSettingsRoute)
+app.use('/user', tokenAuth, user)
 
 // app.use('/UserLocations',tokenAuth, (req, res) => {
 //     res.json({message: "Hello World"})

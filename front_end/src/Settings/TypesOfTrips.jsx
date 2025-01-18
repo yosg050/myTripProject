@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../connections/UserProfile";
 import { Button, Card, Form, InputGroup, Modal } from "react-bootstrap";
-import { IoRemoveCircleOutline } from "react-icons/io5";
+// import { IoRemoveCircleOutline } from "react-icons/io5";
 import { Trash3 } from "react-bootstrap-icons";
-import postUserSettings from "../services/postUserSettings";
+import UserSettings from "../services/userSettings";
 import PopupMessage from "../modals/PopupMessage";
 
 const TripTypes = () => {
-  // const [customTripTypes, setCustomTripTypes] = useState([]);
-  // const { userSettings, setUserSettings } = useUser();
   const { userSettingsTripTypes, setUserSettingsTripTypes } = useUser();
   const [newTripType, setNewTripType] = useState("");
   const [alertMessage, setAlertMessage] = useState({
@@ -17,18 +15,6 @@ const TripTypes = () => {
     message: "",
   });
   const [button, setButton] = useState(false);
-
-  // console.log(userSettings);
-
-  // useEffect(() => {
-  //   if (
-  //     userSettings?.userSettings?.typesOfTrips &&
-  //     userSettings.userSettings.typesOfTrips.length > 0
-  //   ) {
-  //     console.log(userSettings.userSettings.typesOfTrips);
-  //     setCustomTripTypes(userSettings.userSettings.typesOfTrips);
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (newTripType) {
@@ -51,40 +37,29 @@ const TripTypes = () => {
       return;
     }
 
-      const result = await postUserSettings(newTripType, "typesOfTrips", "POST");
-      if (result.success) {
-        // setUserSettings((prevSettings) => ({
-        //   ...prevSettings,
-        //   typesOfTrips: [...prevSettings.userSettings.typesOfTrips, newTripType],
-        // }));
-        setUserSettingsTripTypes((prevTypes) => [...prevTypes, newTripType]);
-        setNewTripType("");
-      }
-    };
+    const result = await UserSettings( "POST" , newTripType, "typesOfTrips");
+    if (result.success) {
+      setUserSettingsTripTypes((prevTypes) => [...prevTypes, newTripType]);
+      setNewTripType("");
+    }
+  };
 
-    const deleteTripType = async (tripType) => {
-
-      setButton(false);
-      const result = await postUserSettings(tripType, "typesOfTrips", "DELETE");
-      if (result.success) {
-        // setUserSettings((prevSettings) => ({
-        //   ...prevSettings,
-        //   typesOfTrips: prevSettings.userSettings.typesOfTrips.filter(
-        //     (type) => type !== tripType
-        //   ),
-        // }));
-        setUserSettingsTripTypes((prevTypes) =>
-          prevTypes.filter((type) => type !== tripType)
-        );
-      } else {
-        setAlertMessage({
-          id: Date.now(),
-          variant: "danger",
-          message: "שגיאה",
-        });
-        setNewTripType("");
-        return;
-      }
+  const deleteTripType = async (tripType) => {
+    setButton(false);
+    const result = await UserSettings("DELETE" , tripType, "typesOfTrips" );
+    if (result.success) {
+      setUserSettingsTripTypes((prevTypes) =>
+        prevTypes.filter((type) => type !== tripType)
+      );
+    } else {
+      setAlertMessage({
+        id: Date.now(),
+        variant: "danger",
+        message: "שגיאה",
+      });
+      setNewTripType("");
+      return;
+    }
   };
 
   return (
