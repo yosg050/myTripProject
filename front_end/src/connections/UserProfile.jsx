@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { getUserLocations } from "../services/getUserLocations";
-import { getUserSettings } from "../services/getUserSettings";
-import { getUserDetails } from "../services/getUserDetails";
-// import UserSettings from "../services/userSettings";
+// import { getUserDetails } from "../services/getUserDetails";
+import UserSettings from "../services/userSettings";
+import UserDetails from "../services/userDetails";
 
 const UserContext = createContext();
 
@@ -33,14 +33,15 @@ export const UserProfile = ({ children }) => {
 
       setUserLocations(userLocations.locations);
 
-      const userDetails = await getUserDetails();
+      // const userDetails = await getUserDetails();
+      const userDetails = await UserDetails('GET');
       console.log(userDetails);
 
       setUserDetails(userDetails);
 
 
-      const userSettings = await getUserSettings();
-      //  const userSettings = await UserSettings('GET');
+
+       const userSettings = await UserSettings('GET');
 
       setUserSettings(userSettings);
 

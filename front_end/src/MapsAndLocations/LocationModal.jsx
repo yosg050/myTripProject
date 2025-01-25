@@ -34,7 +34,7 @@ function LocationModal({ show, handleClose, location }) {
   const { user } = useAuth();
 
   const visitedTrue = useCallback(async () => {
-    if (!user?.uid || !location?.id) {
+    if (!location?.id) {
       console.error("Missing required fields for update");
       return;
     }

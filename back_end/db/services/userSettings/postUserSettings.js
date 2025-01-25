@@ -12,7 +12,7 @@ const postUserSittings = async (userId, newData) => {
             { $push: { [arrayName]: value } }
         );
         
-        if (result.nModified > 0) {
+        if (result.acknowledged) {
             console.log("data added successfully");
             return { success: true, message: "data added successfully" };
         } else {

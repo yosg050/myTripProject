@@ -37,7 +37,7 @@ const TripTypes = () => {
       return;
     }
 
-    const result = await UserSettings( "POST" , newTripType, "typesOfTrips");
+    const result = await UserSettings( "PUT" , newTripType, "typesOfTrips");
     if (result.success) {
       setUserSettingsTripTypes((prevTypes) => [...prevTypes, newTripType]);
       setNewTripType("");

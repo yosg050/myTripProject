@@ -4,27 +4,6 @@ import { Github, Linkedin, Whatsapp } from "react-bootstrap-icons";
 
 
 export default function Info({ show, handleClose }) {
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .nav-tabs {
-        display: flex !important;
-        width: 100% !important;
-      }
-      .nav-tabs .nav-item {
-        flex: 1 !important;
-      }
-      .nav-tabs .nav-link {
-        width: 100% !important;
-        text-align: center !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
 
   return (
     <Modal

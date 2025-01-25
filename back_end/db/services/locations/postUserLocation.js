@@ -12,12 +12,14 @@ const postUserLocation = async (userId, newLocation) => {
         const ValueExistenceCheck = await Locations.updateOne({ userId },
             { $push: { items: newLocation } }
         );
-        console.log("ValueExistenceCheck", ValueExistenceCheck);
 
-        if (ValueExistenceCheck.nModified > 0) {
-
+        if (ValueExistenceCheck.acknowledged) {
+            console.log("Location added successfully");
+            
             return { success: true, message: "Location added successfully" };
         } else {
+            console.log("Failed to add location");
+            
             return { success: false, message: "Failed to add location" };
         }
     } catch (error) {

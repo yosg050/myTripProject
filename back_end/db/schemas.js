@@ -45,6 +45,11 @@ const locationsArrSchema = new mongoose.Schema({
     }
 })
 
+const childrenSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    birthDate: { type: Date, required: true }
+})
+
 
 const usersSettingsSchema = new mongoose.Schema({
     userId: {
@@ -61,7 +66,7 @@ const usersSettingsSchema = new mongoose.Schema({
         default: []
     },
     children: {
-        type: [String],
+        type: [childrenSchema],
         default: []
     }
 });

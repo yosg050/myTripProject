@@ -4,6 +4,7 @@ import { Plus } from "react-bootstrap-icons";
 import { useUser } from "../connections/UserProfile";
 import UserDetails from "../services/userDetails";
 import PopupMessage from "../modals/PopupMessage";
+import UserSettings from "../services/userSettings";
 
 function UserStatus() {
   const [children, setChildren] = useState([]);
@@ -60,13 +61,6 @@ function UserStatus() {
 
     const updatedFields = {};
     for (let key in userData) {
-      console.log(
-        "userData: ",
-        userData[key],
-        "userDetails.userData: ",
-        userDetails.userData[key]
-      );
-
       if (
         userData[key] !== userDetails.userData[key] &&
         !(userData[key] === "" && userDetails.userData[key] === null)
@@ -74,9 +68,32 @@ function UserStatus() {
         updatedFields[key] = userData[key];
       }
     }
-    // console.log("updatedFields ", updatedFields);
 
-    if (Object.keys(updatedFields).length > 0) {
+    // const updatedFieldsChild = [];
+
+    let childChanged = false;
+    if (children.length !== userSettingsChildren.length) {
+      childChanged = true;
+    } else {
+      for (let key in children) {
+        const child = children[key];
+        const childUser = userSettingsChildren[key];
+        if (child.name !== childUser.name) {
+          childChanged = true;
+          break;
+        }
+      }
+    }//UserSettings( "POST" , newTripType, "typesOfTrips")
+
+    if (childChanged) {
+      
+      const result = await UserSettings('PUT', children , "children");
+      if (result.success == true){
+        setUserSettingsChildren(() => [children])
+      }
+    }
+
+    if (Object.keys(updatedFields).length > 0 ) {
       const result = await UserDetails("PUT", updatedFields);
       if (result.success == true) {
         console.log("result.success");
@@ -85,21 +102,21 @@ function UserStatus() {
           ...userDetails,
           userData: {
             ...userDetails.userData,
-            ...updatedFields
-          }
+            ...updatedFields,
+          },
         };
-        
+
         setUserDetails(newUserDetails);
-        const updatedFields = {};
+
         setAlertMessage({
           id: Date.now(),
           variant: "success",
           message: "השינויים התעדכנו בהצלחה",
         });
 
-        setUserData(prevUserData => ({
+        setUserData((prevUserData) => ({
           ...prevUserData,
-          ...updatedFields
+          ...updatedFields,
         }));
       } else {
         setAlertMessage({
@@ -108,7 +125,8 @@ function UserStatus() {
           message: "העדכון נכשל",
         });
       }
-    }}
+    }
+  };
 
   return (
     <div
@@ -139,7 +157,7 @@ function UserStatus() {
                 <Form.Label>שם פרטי</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="הכנס שם פרטי"
+                  placeholder="שם פרטי"
                   name="firstName"
                   value={userData.firstName}
                   onChange={handleInputChange}
@@ -151,7 +169,7 @@ function UserStatus() {
                 <Form.Label>שם משפחה</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="הכנס שם משפחה"
+                  placeholder="שם משפחה"
                   name="lastName"
                   value={userData.lastName}
                   onChange={handleInputChange}
@@ -181,10 +199,11 @@ function UserStatus() {
                   value={userData.gender}
                   onChange={handleInputChange}
                 >
-                  <option value="">בחר</option>
+                  <option value="" disabled>
+                    בחר
+                  </option>
                   <option value="male">זכר</option>
                   <option value="female">נקבה</option>
-                  <option value="other">אחר</option>
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -197,7 +216,9 @@ function UserStatus() {
                   value={userData.maritalStatus}
                   onChange={handleInputChange}
                 >
-                  <option value="">בחר</option>
+                  <option value="" disabled>
+                    בחר
+                  </option>
                   <option value="single">רווק/ה</option>
                   <option value="married">נשוי/אה</option>
                   <option value="divorced">גרוש/ה</option>

@@ -46,9 +46,9 @@ router.delete('/UserSetting', async (req, res) => {
     const newSetting = await deleteUserSittings(req.userId, req.body)
     if (newSetting) {
         
-        return res.status(200).json({ success: true, message: "data added successfully" });
+        return res.status(200).json({ success: true, message: "data delete successfully" });
     } else {
-        return res.status(400).json({ success: false, message: "Failed to add data" });
+        return res.status(400).json({ success: false, message: "Failed to delete data" });
     }
 })
 
