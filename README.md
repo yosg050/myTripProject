@@ -1,4 +1,4 @@
-# Travel Planner Web Application
+# My Trip Web Application
 
 ## Overview
 A web application for creating personalized travel destination lists.
