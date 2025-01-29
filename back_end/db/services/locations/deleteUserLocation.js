@@ -6,13 +6,11 @@ const deleteUserLocation = async (userId, location) => {
         return { success: false, message: "Missing location or userId" };
     };
 
+    const locationDelete = location.target;
     try {
-        // const ValueExistenceCheck = await Locations.findOne({ userId, "items.id": location.id });
-        // if (ValueExistenceCheck) {
-        //     return { success: false, message: "Location already exists" };
-        // }
-        const result = await Locations.updateOne({ userId }, { $pull: { items: location.id } });
-        if (result.acknowledged) {
+        const result = await Locations.updateOne({ userId }, { $pull: { items: { id: locationDelete.id } } });
+
+        if (result.modifiedCount > 0) {
             return { success: true, message: "Location delete successfully" };
         }
 

@@ -1,36 +1,61 @@
 import express from 'express';
 import postUserLocation from '../db/services/locations/postUserLocation.js';
 import getUserLocations from '../db/services/locations/getUserLocations.js';
+import deleteUserLocation from '../db/services/locations/deleteUserLocation.js';
+import patchUserLocation from '../db/services/locations/patchUserLocation.js';
 
 const router = express.Router();
 
-router.post('/postUserLocation', async (req, res) => {
+
+router.post('/', async (req, res) => {
     if (!req.userId) {
   
         return res.status(400).json({ error: "Missing values" });
     }
-    // console.log("req.userId: ", req.userId);
-    // console.log("location:", req.body);
-
-    const newLocation = await postUserLocation(req.userId, req.body)
-    
-
-    if (newLocation && newLocation.message) {
-        return res.status(200).json({ message: newLocation.message });
+    const response = await postUserLocation(req.userId, req.body)
+    if (response && response.message) {
+        return res.status(200).json({ message: response.message });
     } else {
-
-        // console.log("2", newLocation.message);
-
-        return res.status(400).json({ error: newLocation ? newLocation.message : "Unknown error" })
+        return res.status(400).json({ error: response ? response.message : "Unknown error" })
     }
 })
 
-router.get('/getUserLocations', async (req, res) => {
+router.delete('/', async (req, res) => {
     if (!req.userId) {
-        console.log("3", newLocation.message);
         return res.status(400).json({ error: "Missing values" });
     }
+    const response = await deleteUserLocation(req.userId, req.body)
+    if (response.message){
+        console.log("response.message", response.message);
+    }
+    if (response && response.message) {
+        return res.status(200).json({ message: response.message });
+    } else {
+        return res.status(400).json({ error: response ? response.message : "Unknown error" })
+    }
+})
 
+router.patch('/', async (req, res) => {
+    if (!req.userId) {
+        return res.status(400).json({ error: "Missing values" });
+    }
+    const response = await patchUserLocation(req.userId, req.body)
+    if (response.message){
+        console.log("response.message", response.message);
+    }
+    if (response && response.message) {
+        return res.status(200).json({ message: response.message });
+    } else {
+        return res.status(400).json({ error: response ? response.message : "Unknown error" })
+    }
+})
+
+
+
+router.get('/', async (req, res) => {
+    if (!req.userId) {
+        return res.status(400).json({ error: "Missing values" });
+    }
     const userLocations = await getUserLocations(req.userId)
     console.log("userLocations", userLocations);
 
@@ -39,7 +64,6 @@ router.get('/getUserLocations', async (req, res) => {
 
         return res.status(200).json({ locations: userLocations.locations });
     } else {
-        console.log("5", newLocation.message);
         return res.status(400).json({ error: "No locations found" });
     }
 })

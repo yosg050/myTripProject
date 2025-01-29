@@ -3,7 +3,7 @@ import AutocompleteInput from "../MapsAndLocations/SearchBox";
 import React, { useState } from "react";
 import useMobile from "../components/UseMobile";
 import PopupMessage from "./PopupMessage";
-import NewLocation from "./NeuLocation";
+import NewLocation from "./NewLocation";
 import { useUser } from "../connections/UserProfile";
 
 const AddDestinationModal = ({ show, onHide }) => {

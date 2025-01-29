@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getUserLocations } from "../services/getUserLocations";
-// import { getUserDetails } from "../services/getUserDetails";
 import UserSettings from "../services/userSettings";
+import UserLocations from "../services/userLocations";
 import UserDetails from "../services/userDetails";
 
 const UserContext = createContext();
@@ -28,21 +27,15 @@ export const UserProfile = ({ children }) => {
       return;
     }
     try {
-      const userLocations = await getUserLocations();
+      const userLocations = await UserLocations("GET");
       console.log(userLocations.locations);
-
       setUserLocations(userLocations.locations);
 
-      // const userDetails = await getUserDetails();
-      const userDetails = await UserDetails('GET');
+      const userDetails = await UserDetails("GET");
       console.log(userDetails);
-
       setUserDetails(userDetails);
 
-
-
-       const userSettings = await UserSettings('GET');
-
+      const userSettings = await UserSettings("GET");
       setUserSettings(userSettings);
 
       if (userSettings?.userSettings) {
@@ -50,7 +43,7 @@ export const UserProfile = ({ children }) => {
         setUserSettingsChildren(userSettings.userSettings.selectedPlaces);
         setUserSettingsSelectedPlaces(userSettings.userSettings.children);
       }
-      
+
       console.log(userSettings);
       console.log(userSettingsTripTypes);
       console.log(userSettingsChildren);
@@ -75,7 +68,7 @@ export const UserProfile = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        userDetails, 
+        userDetails,
         userLocations,
         userSettings,
         userSettingsTripTypes,

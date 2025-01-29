@@ -126,7 +126,7 @@ const Home = () => {
         <Spinner variant="primary" />
       </div>
     );
-  if (userDataError) return <p>שגיאה בטעינת המידע: {userDataError.message}</p>;
+  if (userDataError) return <p>שגיאה בטעינת המידע: {userDataError}</p>;
   if (centerError) return <p>{centerError}</p>;
 
   const refreshButton = () => {

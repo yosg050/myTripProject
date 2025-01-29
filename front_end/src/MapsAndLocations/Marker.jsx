@@ -7,6 +7,7 @@ function Markers({ locations, onLocationUpdate, handleShow }) {
   const [popupInfo, setPopupInfo] = React.useState(null);
   const { current: map } = useMap();
 
+
   useEffect(() => {
     if (map) {
       const onClick = (e) => {

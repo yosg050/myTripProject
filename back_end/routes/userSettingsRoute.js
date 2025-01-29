@@ -5,7 +5,7 @@ import deleteUserSittings from '../db/services/userSettings/deleteUserSettings.j
 
 const router = express.Router();
 
-router.put('/UserSettings', async (req, res) => {
+router.put('/', async (req, res) => {
     if (!req.userId) {
 
         return res.status(400).json({ error: "Missing values" });
@@ -19,7 +19,7 @@ router.put('/UserSettings', async (req, res) => {
     }
 })
 
-router.get('/UserSettings', async (req, res) => {
+router.get('/', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
@@ -36,7 +36,7 @@ router.get('/UserSettings', async (req, res) => {
 })
 
 
-router.delete('/UserSettings', async (req, res) => {
+router.delete('/', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }

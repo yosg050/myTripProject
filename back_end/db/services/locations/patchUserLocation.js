@@ -1,7 +1,7 @@
 import { Locations } from "../../schemas.js";
 
 
-const postUserLocation = async (userId, newLocation) => {
+const patchUserLocation = async (userId, newLocation) => {
     if (!newLocation || !userId) {
         return { success: false, message: "Missing location or userId" };
     };
@@ -9,21 +9,21 @@ const postUserLocation = async (userId, newLocation) => {
     try {
         console.log("newLocation", location);
 
-        const ValueExistenceCheck = await Locations.updateOne({ userId },
-            { $push: { items: location } }
+        const ValueExistenceCheck = await Locations.updateOne({ userId, "items.id ": id },
+            { $set: x }//not x
         );
 
         if (ValueExistenceCheck.acknowledged) {
             console.log("Location added successfully");
-            
+
             return { success: true, message: "Location added successfully" };
         } else {
             console.log("Failed to add location");
-            
+
             return { success: false, message: "Failed to add location" };
         }
     } catch (error) {
-        if (error.code === 11000) { 
+        if (error.code === 11000) {
             return { success: false, message: "Location already exists" };
         }
         console.error("Error adding location: ", error);
@@ -31,4 +31,4 @@ const postUserLocation = async (userId, newLocation) => {
     }
 };
 
-export default postUserLocation;
+export default patchUserLocation;

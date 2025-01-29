@@ -5,7 +5,7 @@ const UserSettings = async (methodType, newTarget = null, array = null) => {
   if (methodType === "GET") {
     try {
       const response = await fetch(
-        `http://${LOCAL_SERVER_URL}/userSettings/UserSettings`,
+        `http://${LOCAL_SERVER_URL}/userSettings`,
         {
           method: "GET",
           headers: {
@@ -31,7 +31,7 @@ const UserSettings = async (methodType, newTarget = null, array = null) => {
     if (newTarget) {
       try {
         const response = await fetch(
-          `http://${LOCAL_SERVER_URL}/userSettings/UserSettings`,
+          `http://${LOCAL_SERVER_URL}/userSettings`,
           {
             method: methodType,
             headers: {

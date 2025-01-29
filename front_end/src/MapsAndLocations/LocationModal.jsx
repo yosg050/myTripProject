@@ -14,35 +14,24 @@ import { db } from "../../firebaseConfig";
 import { useAuth } from "../connections/AuthContext";
 import { Pin, Star, StarFill, StarHalf, Trash3 } from "react-bootstrap-icons";
 import LocationImage from "./LocationImage";
-// import placesData from "../../LocationsHebrewEnglish";
 import Navigation from "./Navigation";
 import Sharing from "../sharing/Sharing";
 import { useUser } from "../connections/UserProfile";
-// import Sharing from "./Sharing";
-
-// const englishToHebrew = {};
-// placesData.forEach((Item) => {
-//   englishToHebrew[Item.english] = Item.hebrew;
-// });
-
-// function convertTypeToHebrew(englishType) {
-//   return englishToHebrew[englishType] || englishType;
-// }
-
-
+import UserLocations from "../services/userLocations";
+// import UserLocations from "../services/userLocation";
 
 function LocationModal({ show, handleClose, location }) {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const { user } = useAuth();
-  const { userSettingsSelectedPlaces } = useUser();
-  
+  const { userSettingsSelectedPlaces, setUserLocations } = useUser();
+
   const visitedTrue = useCallback(async () => {
     if (!location?.id) {
       console.error("Missing required fields for update");
       return;
     }
-    
+
     setUpdating(true);
     try {
       const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
@@ -51,7 +40,7 @@ function LocationModal({ show, handleClose, location }) {
         visit: true,
         lastUpdated: new Date().toISOString(),
       });
-      
+
       handleClose();
     } catch (error) {
       console.error("Error updating location:", error);
@@ -59,22 +48,22 @@ function LocationModal({ show, handleClose, location }) {
       setUpdating(false);
     }
   }, [user, location, handleClose]);
-  
+
   const visitedFalse = useCallback(async () => {
     if (!user?.uid || !location?.id) {
       console.error("Missing required fields for update");
       return;
     }
-    
+
     setUpdating(true);
     try {
       const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-      
+
       await updateDoc(locationRef, {
         visit: false,
         lastUpdated: new Date().toISOString(),
       });
-      
+
       handleClose();
     } catch (error) {
       console.error("Error updating location:", error);
@@ -82,57 +71,74 @@ function LocationModal({ show, handleClose, location }) {
       setUpdating(false);
     }
   }, [user, location, handleClose]);
-  
-  const handleDelete = useCallback(async () => {
-    if (!user?.uid || !location?.id) {
-      console.error("Missing required fields for delete");
-      return;
-    }
-    
+
+  // const handleDelete = useCallback(async () => {
+  //   if (!user?.uid || !location?.id) {
+  //     console.error("Missing required fields for delete");
+  //     return;
+  //   }
+
+  //   setDeleting(true);
+  //   try {
+  //     const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
+
+  //     await deleteDoc(locationRef);
+
+  //     handleClose();
+  //   } catch (error) {
+  //     console.error("Error deleting location:", error);
+  //   } finally {
+  //     setDeleting(false);
+  //   }
+  // }, [user, location, handleClose]);
+
+  const handleDelete = async (location) => {
+    console.log("location", location);
+
     setDeleting(true);
-    try {
-      const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-      
-      await deleteDoc(locationRef);
-      
+    const response = await UserLocations("DELETE", location);
+    if (response.success) {
+      setUserLocations((locations) =>
+        locations.filter((loc) => loc.id !== location.id)
+      );
       handleClose();
-    } catch (error) {
-      console.error("Error deleting location:", error);
-    } finally {
+      setDeleting(false);
+    } else {
+      console.log(response.message);
       setDeleting(false);
     }
-  }, [user, location, handleClose]);
-  
-  const handleImageUpload = useCallback(
-    async (downloadURL) => {
-      if (!user?.uid || !location?.id) {
-        console.error("Missing required fields for image upload");
-        return;
-      }
+  };
 
-      try {
-        const locationRef = doc(
-          db,
-          "Users",
-          user.uid,
-          "Locations",
-          location.id
-        );
-        await updateDoc(locationRef, {
-          image: downloadURL,
-          lastUpdated: new Date().toISOString(),
-        });
+  // const handleImageUpload = useCallback(
+  //   async (downloadURL) => {
+  //     if (!user?.uid || !location?.id) {
+  //       console.error("Missing required fields for image upload");
+  //       return;
+  //     }
 
-        handleClose();
-      } catch (error) {
-        console.error("Error updating location with new image:", error);
-      }
-    },
-    [user, location, handleClose]
-  );
-  
+  //     try {
+  //       const locationRef = doc(
+  //         db,
+  //         "Users",
+  //         user.uid,
+  //         "Locations",
+  //         location.id
+  //       );
+  //       await updateDoc(locationRef, {
+  //         image: downloadURL,
+  //         lastUpdated: new Date().toISOString(),
+  //       });
+
+  //       handleClose();
+  //     } catch (error) {
+  //       console.error("Error updating location with new image:", error);
+  //     }
+  //   },
+  //   [user, location, handleClose]
+  // );
+
   if (!location) return null;
-  
+
   const englishToHebrew = (type) => {
     if (userSettingsSelectedPlaces) {
       const place = userSettingsSelectedPlaces.find(
@@ -386,7 +392,7 @@ function LocationModal({ show, handleClose, location }) {
               <LocationImage
                 location={location}
                 user={user}
-                onImageUpload={handleImageUpload}
+                // onImageUpload={handleImageUpload}
               />
             </Col>
           </Row>
@@ -406,7 +412,7 @@ function LocationModal({ show, handleClose, location }) {
 
         <Modal.Footer style={{ justifyContent: "center" }}>
           <Navigation location={location} />
-          <Sharing location={location} />
+          {/* <Sharing location={location} /> */}
           {/* <OverlayTrigger placement="bottom" overlay={<Tooltip>שתף</Tooltip>}>
           <Button
             variant="outline-warning"
@@ -422,7 +428,7 @@ function LocationModal({ show, handleClose, location }) {
           >
             <Button
               variant="outline-danger"
-              onClick={handleDelete}
+              onClick={(e) => handleDelete(location)}
               disabled={deleting}
             >
               {deleting ? "מוחק..." : <Trash3 />}

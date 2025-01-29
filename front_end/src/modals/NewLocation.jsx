@@ -1,7 +1,8 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
 import { useUser } from "../connections/UserProfile";
 import { useState } from "react";
-import addLocationToUser from "../services/postUserLocation";
+import UserLocations from "../services/userLocations";
+// import UserLocations from "../services/userLocation";
 
 const NewLocation = ({ newPlace, onLocationAdded }) => {
   const [arrayDbTypes, setArrayDbTypes] = useState([]);
@@ -9,7 +10,7 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
   const [notes, setNotes] = useState("");
   const { userSettingsTripTypes, setUserSettingsTripTypes } = useUser();
 
-  console.log("userSettingsTripTypes: " , userSettingsTripTypes);
+  console.log("userSettingsTripTypes: ", userSettingsTripTypes);
 
   const handleTripTypeChange = (tripType, isChecked) => {
     if (isChecked) {
@@ -21,12 +22,16 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
 
   const handleAddLocation = async () => {
     const updatedPlace = {
-      ...newPlace,
+      id: newPlace.place_id,
+      name: newPlace.name,
+      address: newPlace.address,
+      latitude: newPlace.latitude,
+      longitude: newPlace.longitude,
       tripTypes: selectedTripTypes,
       notes: notes,
     };
     console.log(updatedPlace);
-    const result = await addLocationToUser(updatedPlace);
+    const result = await UserLocations("POST", updatedPlace);
     if (result.success) {
       onLocationAdded?.({ success: true });
     } else {
