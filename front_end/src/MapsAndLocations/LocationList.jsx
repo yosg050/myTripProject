@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Card, Spinner } from "react-bootstrap";
 import LocationModal from "./LocationModal";
+import { useUser } from "../connections/UserProfile";
 
 function LocationList({ locations, onLocationUpdate }) {
   const [showModal, setShowModal] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [listSize, setListSize] = useState({ width: "100%", height: "100%" });
   const listContainerRef = useRef(null);
-
+  const { loading } = useUser();
   const updateListSize = useCallback(() => {
     if (listContainerRef.current) {
       const { offsetWidth } = listContainerRef.current.parentElement;
@@ -46,16 +47,31 @@ function LocationList({ locations, onLocationUpdate }) {
     },
     [onLocationUpdate]
   );
-  if (!locations || !Array.isArray(locations)) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
-        <Spinner variant="primary" />
-      </div>
-    );
-  }
+  // if (loading)
+  // {
+  //   console.log("ממתין לטעינת מיקומים");
+    
+  //   return (
+  //     <div
+  //       className="d-flex justify-content-center align-items-center"
+  //       style={{ height: "100vh" }}
+  //     >
+  //       <Spinner variant="primary" />
+  //     </div>
+  //   );
+  // }
+
+  // if (!locations || !Array.isArray(locations)) {
+  //   return (
+  //     <div
+  //       className="d-flex justify-content-center align-items-center"
+  //       style={{ height: "100vh" }}
+  //     >
+  //       <Spinner variant="primary" />
+  //     </div>
+  //   );
+  // }
+
   if (locations.length === 0) {
     return (
       <div
@@ -82,6 +98,8 @@ function LocationList({ locations, onLocationUpdate }) {
     textAlign: "right",
     direction: "rtl",
   };
+
+
 
   return (
     <div ref={listContainerRef} style={listContainerStyle}>

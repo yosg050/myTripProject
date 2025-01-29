@@ -10,7 +10,7 @@ import placeId from '../services/locations/placeId.js';
 
 
 
-router.post('/filter-locations', async (req, res) => {
+router.post('/filterLocations', async (req, res) => {
     try {
         const { locations, searchParams } = req.body; //query;//body;
         const filteredLocations = await filterLocations({ locations, searchParams, apiKey });

@@ -1,6 +1,7 @@
 import { LOCAL_SERVER_URL } from "../../config";
 
 const UserSettings = async (methodType, newTarget = null, array = null) => {
+  
   if (methodType === "GET") {
     try {
       const response = await fetch(
@@ -25,10 +26,12 @@ const UserSettings = async (methodType, newTarget = null, array = null) => {
       throw error;
     }
   } else {
+    console.log("newTarget", newTarget);
+    
     if (newTarget) {
       try {
         const response = await fetch(
-          `http://${LOCAL_SERVER_URL}/userSettings/UserSetting`,
+          `http://${LOCAL_SERVER_URL}/userSettings/UserSettings`,
           {
             method: methodType,
             headers: {
@@ -62,4 +65,6 @@ const UserSettings = async (methodType, newTarget = null, array = null) => {
     return { success: false, message: "Invalid settings data" };
   }
 };
+
+
 export default UserSettings;

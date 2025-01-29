@@ -32,13 +32,12 @@ export function filterLocationsUI(
   return filtered;
 }
 
-
 export async function filterLocationsTarget(
   locations,
   {
     selectedTypes = {},
     totalTravelMinutes = 0,
-    selectedPlacesForTrip = {},
+    selectedPlacesForTrip = [],
     center = null,
     includeVisited = false,
     transportMode = "driving",
@@ -53,6 +52,8 @@ export async function filterLocationsTarget(
     includeVisited,
     transportMode,
   });
+
+ 
 
   if (!Array.isArray(locations)) {
     console.error("Locations is not an array:", locations);
@@ -77,11 +78,12 @@ export async function filterLocationsTarget(
     return hasSelectedTypes;
   });
 
-  const selectedPlacesForTripObject = Object.keys(selectedPlacesForTrip);
+  // const selectedPlacesForTripObject = Object.keys(selectedPlacesForTrip);
   const searchParams = {
     selectedTypes,
     totalTravelMinutes,
-    selectedPlacesForTripObject,
+    selectedPlacesForTrip,
+    // selectedPlacesForTripObject,
     center,
     includeVisited,
     transportMode,
@@ -91,7 +93,7 @@ export async function filterLocationsTarget(
 
   try {
     const response = await fetch(
-      `http://${LOCAL_SERVER_URL}/locations/filter-locations`,
+      `http://${LOCAL_SERVER_URL}/locations/filterLocations`,
       {
         method: "POST",
         headers: {
@@ -106,13 +108,13 @@ export async function filterLocationsTarget(
     );
 
     if (response.ok) {
-  const data = await response.json();
-  filteredLocations = data;
-  console.log(
-    "Filtered locations after server response:",
-    filteredLocations.map((loc) => loc.name)
-  );
-}
+      const data = await response.json();
+      filteredLocations = data;
+      console.log(
+        "Filtered locations after server response:",
+        filteredLocations.map((loc) => loc.name)
+      );
+    }
   } catch (error) {
     console.error("Error in server request:", error);
     console.warn("Using client-side filtered results due to server error");

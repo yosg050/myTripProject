@@ -3,9 +3,8 @@ import { Image, Dropdown, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Gear, InfoCircle, PersonCircle } from "react-bootstrap-icons";
 import UserTestAndExit from "../connections/UserTest&Exit";
 import { useAuth } from "../connections/AuthContext";
-import { useUserProfile } from "../connections/GetUserDate";
 import Settings from "./Settings";
-import Info from "./Info";
+
 import useMobile from "../components/UseMobile";
 
 const ProfileButton = () => {
@@ -13,16 +12,6 @@ const ProfileButton = () => {
   const [showSettings, setShowSettings] = useState(false);
   const { user, logout } = useAuth();
   const [profileData, setProfileData] = useState(null);
-  const [showInfo, setShowInfo] = useState(false);
-
-  //const [imageError, setImageError] = useState(false);
-  // const { userData: userProfileData } = useUserProfile();
-
-  // useEffect(() => {
-  //   if (userProfileData) {
-  //     setProfileData(userProfileData);
-  //   }
-  // }, [userProfileData]);
 
   const handleLogout = async () => {
     try {
@@ -78,12 +67,6 @@ const ProfileButton = () => {
             >
               <Gear className="me-2" /> הגדרות
             </Dropdown.Item>
-            <Dropdown.Item
-              className="text-center"
-              onClick={() => setShowInfo(true)}
-            >
-              <InfoCircle className="me-2" /> מידע
-            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </OverlayTrigger>
@@ -91,7 +74,6 @@ const ProfileButton = () => {
         show={showSettings}
         handleClose={() => setShowSettings(false)}
       />
-      <Info show={showInfo} handleClose={() => setShowInfo(false)} />
     </>
   );
 };

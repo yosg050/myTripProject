@@ -24,9 +24,11 @@ const TripTypes = () => {
     }
   }, [newTripType]);
 
-  const addNewType = async () => {
+  const addNewType = async (newTripTypeRun) => {
+    console.log(newTripTypeRun);
+    
     setButton(false);
-    const isValue = userSettingsTripTypes.includes(newTripType);
+    const isValue = userSettingsTripTypes.includes(newTripTypeRun);
     if (isValue) {
       setAlertMessage({
         id: Date.now(),
@@ -36,11 +38,16 @@ const TripTypes = () => {
       setNewTripType("");
       return;
     }
+    const result = await UserSettings( "PUT" , newTripTypeRun, "typesOfTrips");
 
-    const result = await UserSettings( "PUT" , newTripType, "typesOfTrips");
     if (result.success) {
-      setUserSettingsTripTypes((prevTypes) => [...prevTypes, newTripType]);
+      setUserSettingsTripTypes((prevTypes) => [...prevTypes, newTripTypeRun]);
       setNewTripType("");
+      setAlertMessage({
+        id: Date.now(),
+        variant: "success",
+        message: `${newTripTypeRun} נוסף בהצלחה`,
+      });
     }
   };
 
@@ -138,7 +145,7 @@ const TripTypes = () => {
         <InputGroup style={{ width: "300px", margin: "5px", direction: "ltr" }}>
           <Button
             variant="outline-secondary"
-            onClick={addNewType}
+            onClick={(e) => addNewType(newTripType)}
             disabled={!button}
           >
             הוסף

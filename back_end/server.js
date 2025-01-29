@@ -12,6 +12,7 @@ import locationsRoute from './routes/locationsRoute.js';
 import user from './routes/usersRoute.js';
 import userLocationsRoute from './routes/userLocationsRoute.js';
 import userSettingsRoute from './routes/userSettingsRoute.js'
+import placesTypesServer from './db/services/placesType/placesTypesServer.js';
 console.log("turns ", Date.now());
 
 
@@ -39,6 +40,8 @@ app.use('/locations', tokenAuth, locationsRoute)
 app.use('/userLocations', tokenAuth, userLocationsRoute)
 app.use('/userSettings', tokenAuth, userSettingsRoute)
 app.use('/user', tokenAuth, user)
+app.use('/placesTypes', tokenAuth, placesTypesServer)
+
 
 // app.use('/UserLocations',tokenAuth, (req, res) => {
 //     res.json({message: "Hello World"})

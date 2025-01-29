@@ -27,7 +27,8 @@ async function filterLocations({ locations, searchParams, apiKey }) {
   const {
     center,
     totalTravelMinutes,
-    transportMode
+    transportMode,
+    selectedPlacesForTrip
   } = searchParams;
 
   if (!locations || locations.length === 0) {
@@ -37,6 +38,10 @@ async function filterLocations({ locations, searchParams, apiKey }) {
   if (!center || !center.latitude || !center.longitude) {
     return locations;
   }
+  // console.log("searchParams: " , searchParams);
+  
+  // console.log(" center: ", center, "totalTravelMinutes: ", totalTravelMinutes, "transportMode; ", transportMode);
+
   const filteredLocations = locations;
   const hasTimeLimit = totalTravelMinutes > 0;
   let finalFilteredLocations = [];
@@ -55,9 +60,8 @@ async function filterLocations({ locations, searchParams, apiKey }) {
 
     if (hasTimeLimit) {
       const distance = LocationsAirDistance(center.latitude, center.longitude, location.latitude, location.longitude);
-    
+
       if (distance / drivingMode > totalTravelMinutes) {
-        // console.log("distance per minute: ", location)
         continue;
       }
 
@@ -65,17 +69,14 @@ async function filterLocations({ locations, searchParams, apiKey }) {
 
     try {
       const distanceMatrixUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${center.latitude},${center.longitude}&destinations=${location.latitude},${location.longitude}&mode=${mode}&key=${apiKey}`;
-      // console.log(`Requesting distance matrix for ${location.name} with mode: ${mode}`);
       const response = await axios.get(distanceMatrixUrl);
 
-      // console.log(`Raw API response for ${location.name}:`, JSON.stringify(response.data, null, 2));
 
       if (response.data.status === 'OK' && response.data.rows[0].elements[0].status === 'OK') {
         const distanceText = response.data.rows[0].elements[0].distance.text;
         const durationText = response.data.rows[0].elements[0].duration.text;
         const durationInMinutes = Math.round(response.data.rows[0].elements[0].duration.value / 60);
 
-        // console.log(`Location: ${location.name}, Duration: ${durationText}, Distance: ${distanceText}, Mode: ${mode}`);
 
         if (!hasTimeLimit || durationInMinutes <= totalTravelMinutes) {
           finalFilteredLocations.push({
@@ -86,8 +87,6 @@ async function filterLocations({ locations, searchParams, apiKey }) {
             transportMode: mode
           });
         }
-      } else {
-        // console.log(`Skipping location ${location.name} due to Distance Matrix API error: ${response.data.status}`);
       }
     } catch (error) {
       console.error(`Error calculating distance for ${location.name}:`, error.message);
@@ -97,23 +96,26 @@ async function filterLocations({ locations, searchParams, apiKey }) {
     }
   }
 
- if (searchParams.selectedPlacesForTripObject) {
-  const placesForTrip = searchParams.selectedPlacesForTripObject;
-  finalFilteredLocations = await placesAroundResults(placesForTrip, finalFilteredLocations, apiKey);
-}
+  if (selectedPlacesForTrip.length > 0) {
+    const placesForTrip = searchParams.selectedPlacesForTrip;
+    console.log("placesForTrip: ", placesForTrip);
 
-if (Array.isArray(finalFilteredLocations)) {
-  finalFilteredLocations.sort((a, b) => a.durationInMinutes - b.durationInMinutes);
-} else {
-  console.error('finalFilteredLocations is not an array:', finalFilteredLocations);
-  // finalFilteredLocations = []; // או טפל בזה בדרך אחרת
-}
-finalFilteredLocations.forEach((location, index) => {
-  console.log(`${index + 1}, ${location.name} ${location.distanceText}, ${location.durationText}, ${location.transportMode} ${location.placesAround} ${location.type}`)
-});
+    finalFilteredLocations = await placesAroundResults(placesForTrip, finalFilteredLocations, apiKey);
+    console.log("finalFilteredLocations: ", finalFilteredLocations);
+
+  }
+
+  if (Array.isArray(finalFilteredLocations)) {
+    finalFilteredLocations.sort((a, b) => a.durationInMinutes - b.durationInMinutes);
+  } else {
+    console.error('finalFilteredLocations is not an array:', finalFilteredLocations);
+  }
+  finalFilteredLocations.forEach((location, index) => {
+    console.log(`${index + 1}, ${location.name} ${location.distanceText}, ${location.durationText}, ${location.transportMode} ${location.placesAround} ${location.type}`)
+  });
 
 
-return finalFilteredLocations;
+  return finalFilteredLocations;
 }
 
 export default filterLocations;

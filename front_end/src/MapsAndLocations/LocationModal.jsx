@@ -14,31 +14,35 @@ import { db } from "../../firebaseConfig";
 import { useAuth } from "../connections/AuthContext";
 import { Pin, Star, StarFill, StarHalf, Trash3 } from "react-bootstrap-icons";
 import LocationImage from "./LocationImage";
-import placesData from "../../LocationsHebrewEnglish";
+// import placesData from "../../LocationsHebrewEnglish";
 import Navigation from "./Navigation";
 import Sharing from "../sharing/Sharing";
+import { useUser } from "../connections/UserProfile";
 // import Sharing from "./Sharing";
 
+// const englishToHebrew = {};
+// placesData.forEach((Item) => {
+//   englishToHebrew[Item.english] = Item.hebrew;
+// });
 
-const englishToHebrew = {};
-placesData.forEach((Item) => {
-  englishToHebrew[Item.english] = Item.hebrew;
-});
+// function convertTypeToHebrew(englishType) {
+//   return englishToHebrew[englishType] || englishType;
+// }
 
-function convertTypeToHebrew(englishType) {
-  return englishToHebrew[englishType] || englishType;
-}
+
+
 function LocationModal({ show, handleClose, location }) {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const { user } = useAuth();
-
+  const { userSettingsSelectedPlaces } = useUser();
+  
   const visitedTrue = useCallback(async () => {
     if (!location?.id) {
       console.error("Missing required fields for update");
       return;
     }
-
+    
     setUpdating(true);
     try {
       const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
@@ -47,7 +51,7 @@ function LocationModal({ show, handleClose, location }) {
         visit: true,
         lastUpdated: new Date().toISOString(),
       });
-
+      
       handleClose();
     } catch (error) {
       console.error("Error updating location:", error);
@@ -55,22 +59,22 @@ function LocationModal({ show, handleClose, location }) {
       setUpdating(false);
     }
   }, [user, location, handleClose]);
-
+  
   const visitedFalse = useCallback(async () => {
     if (!user?.uid || !location?.id) {
       console.error("Missing required fields for update");
       return;
     }
-
+    
     setUpdating(true);
     try {
       const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-
+      
       await updateDoc(locationRef, {
         visit: false,
         lastUpdated: new Date().toISOString(),
       });
-
+      
       handleClose();
     } catch (error) {
       console.error("Error updating location:", error);
@@ -78,19 +82,19 @@ function LocationModal({ show, handleClose, location }) {
       setUpdating(false);
     }
   }, [user, location, handleClose]);
-
+  
   const handleDelete = useCallback(async () => {
     if (!user?.uid || !location?.id) {
       console.error("Missing required fields for delete");
       return;
     }
-
+    
     setDeleting(true);
     try {
       const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-
+      
       await deleteDoc(locationRef);
-
+      
       handleClose();
     } catch (error) {
       console.error("Error deleting location:", error);
@@ -98,7 +102,7 @@ function LocationModal({ show, handleClose, location }) {
       setDeleting(false);
     }
   }, [user, location, handleClose]);
-
+  
   const handleImageUpload = useCallback(
     async (downloadURL) => {
       if (!user?.uid || !location?.id) {
@@ -126,8 +130,20 @@ function LocationModal({ show, handleClose, location }) {
     },
     [user, location, handleClose]
   );
-
+  
   if (!location) return null;
+  
+  const englishToHebrew = (type) => {
+    if (userSettingsSelectedPlaces) {
+      const place = userSettingsSelectedPlaces.find(
+        (place) => place.english === type
+      );
+      if (place) {
+        return place.hebrew;
+      }
+    }
+    return type;
+  };
 
   return (
     <>
@@ -289,7 +305,7 @@ function LocationModal({ show, handleClose, location }) {
                                     marginLeft: "1px",
                                   }}
                                 >
-                                  {convertTypeToHebrew(place.type)}
+                                  {englishToHebrew(place.type)}
                                 </strong>
                               </Modal.Title>
                               {place.rating && (

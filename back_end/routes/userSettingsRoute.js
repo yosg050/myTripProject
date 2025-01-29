@@ -5,17 +5,16 @@ import deleteUserSittings from '../db/services/userSettings/deleteUserSettings.j
 
 const router = express.Router();
 
-router.post('/UserSetting', async (req, res) => {
+router.put('/UserSettings', async (req, res) => {
     if (!req.userId) {
+
         return res.status(400).json({ error: "Missing values" });
     }
-
     const newSetting = await postUserSittings(req.userId, req.body)
-
     if (newSetting) {
-        
         return res.status(200).json({ success: true, message: "data added successfully" });
     } else {
+        console.log("Failed to add data");
         return res.status(400).json({ success: false, message: "Failed to add data" });
     }
 })
@@ -24,7 +23,6 @@ router.get('/UserSettings', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
-
     const userSettings = await getUserSettings(req.userId)
     console.log("userSettings", userSettings);
 
@@ -38,14 +36,14 @@ router.get('/UserSettings', async (req, res) => {
 })
 
 
-router.delete('/UserSetting', async (req, res) => {
+router.delete('/UserSettings', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
 
     const newSetting = await deleteUserSittings(req.userId, req.body)
     if (newSetting) {
-        
+
         return res.status(200).json({ success: true, message: "data delete successfully" });
     } else {
         return res.status(400).json({ success: false, message: "Failed to delete data" });

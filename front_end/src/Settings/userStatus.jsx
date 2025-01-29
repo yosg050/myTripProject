@@ -228,7 +228,7 @@ function UserStatus() {
             </Col>
           </Row>
 
-          <Form.Group className="mb-3">
+          {/* <Form.Group className="mb-3">
             <div style={{ justifyContent: "center" }}>
               <Button variant="outline-info" onClick={addChild} className="m-2">
                 הוסף ילד
@@ -261,7 +261,7 @@ function UserStatus() {
                 </Row>
               </div>
             ))}
-          </Form.Group>
+          </Form.Group> */}
         </Form>
       </div>
       <div

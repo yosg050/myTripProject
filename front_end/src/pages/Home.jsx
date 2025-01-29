@@ -37,10 +37,10 @@ const Home = () => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [filterParams, setFilterParams] = useState({});
   const [locationsFiltered, setLocationsFiltered] = useState([]);
+  const [loading, setLoading] = useState(false);
   const listLocations = "היעדים שלי";
   const choiceLocations = "בחירת יעד מתאים";
   const [title, setTitle] = useState(listLocations);
-  
 
   const {
     userLocations,
@@ -57,7 +57,6 @@ const Home = () => {
     updateCenter,
   } = useCenter();
 
-
   const handleCenterChange = useCallback(
     (newCenter) => {
       console.log("New center:", newCenter);
@@ -69,6 +68,7 @@ const Home = () => {
   useEffect(() => {
     if (Array.isArray(userLocations) && userLocations.length > 0) {
       if (activeFilter === "Target") {
+        setLoading(true);
         filterLocationsTarget(userLocations, { ...filterParams, center })
           .then((filteredResult) => {
             setLocationsFiltered(filteredResult);
@@ -76,6 +76,9 @@ const Home = () => {
           .catch((error) => {
             console.error("Error in filterLocationsTarget:", error);
             setLocationsFiltered([]);
+          })
+          .finally(() => {
+            setLoading(false);
           });
       } else {
         const filteredResult = filterLocationsUI(userLocations, filterParams);
@@ -235,28 +238,42 @@ const Home = () => {
               </div>
               <div
                 style={{
+                  display: "flex",
                   width: "35%",
                   height: "100%",
                   overflowY: "auto",
                   scrollbarWidth: "none",
                   msOverflowStyle: "none",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                <LocationList locations={locationsFiltered} />
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <LocationList locations={locationsFiltered} />
+                )}
               </div>
             </>
           ) : transportMode === 1 ? (
             <div
               style={{
+                display: "flex",
                 width: "100%",
                 height: "500vh",
                 overflowY: "auto",
                 marginLeft: "5px",
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <LocationList locations={locationsFiltered} />
+              {loading ? (
+                <Spinner />
+              ) : (
+                <LocationList locations={locationsFiltered} />
+              )}
             </div>
           ) : (
             <div

@@ -11,6 +11,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ErrorBoundary from "./pages/ErrorBoundary";
 import AuthProviderToken from "./connections/AuthProviderToken";
 import Home from "./pages/Home";
+// import './App.css';
 
 const router = createBrowserRouter([
   {

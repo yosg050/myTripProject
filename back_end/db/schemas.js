@@ -70,13 +70,17 @@ const usersSettingsSchema = new mongoose.Schema({
         default: []
     }
 });
+const placesTypesSchema = new mongoose.Schema({
+    hebrew: { type: String, required: true },  
+    english: { type: String, required: true }
+})
 
 
 const User = mongoose.model('User', userSchema);
 const Locations = mongoose.model('Locations', locationsArrSchema);
 const UsersSettings = mongoose.model('UsersSettings', usersSettingsSchema);
+const PlacesTypes = mongoose.model('PlacesTypes', placesTypesSchema);
 
-
-export { User, Locations, UsersSettings };
+export { User, Locations, UsersSettings, PlacesTypes};
 
 

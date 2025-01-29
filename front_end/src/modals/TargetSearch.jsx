@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Offcanvas,
   Form,
@@ -9,47 +9,39 @@ import {
   Col,
   ButtonGroup,
 } from "react-bootstrap";
-import { useUserProfile } from "../connections/GetUserDate";
-import placesData from "../../LocationsHebrewEnglish";
-import { Bicycle, BusFront, CarFront, PersonWalking } from "react-bootstrap-icons";
+import {
+  Bicycle,
+  BusFront,
+  CarFront,
+  PersonWalking,
+} from "react-bootstrap-icons";
 import useMobile from "../components/UseMobile";
+import PlacesFotTrip from "./PlacesFotTrip";
+import { useUser } from "../connections/UserProfile";
 
-const  TargetSearch = ({ show, onHide, onFilterChange }) => {
-  const [selectedPlacesForTrip, setSelectedPlacesForTrip] = useState({});
+const TargetSearch = ({ show, onHide, onFilterChange }) => {
   const [selectedTripTypes, setSelectedTripTypes] = useState({});
-  const [availablePlaces, setAvailablePlaces] = useState([]);
-  const [availableTripTypes, setAvailableTripTypes] = useState([]);
-  const { userData, loading, error } = useUserProfile();
+  // const [availableTripTypes, setAvailableTripTypes] = useState([]);
   const [travelHours, setTravelHours] = useState(0);
   const [travelMinutes, setTravelMinutes] = useState(0);
   const [includeVisited, setIncludeVisited] = useState(false);
-  const [transportMode, setTransportMode] = useState('driving');
+  const [transportMode, setTransportMode] = useState("driving");
+  const [placesObjet, setPlacesObjet] = useState([]);
   const isMobile = useMobile();
-
-  useEffect(() => {
-    if (userData) {
-      if (userData.selectedPlaces) {
-        setAvailablePlaces(
-          placesData.filter(
-            (place) => userData.selectedPlaces[place.english] === true
-          )
-        );
-      }
-      if (userData.typesOfTrips) {
-        const userPreferredTypes = Object.entries(userData.typesOfTrips)
-          .filter(([_, value]) => value)
-          .map(([key, _]) => key);
-        setAvailableTripTypes(userPreferredTypes);
-      }
-    }
-  }, [userData]);
-
-  const handlePlaceCheckboxChange = (english, isChecked) => {
-    setSelectedPlacesForTrip((prev) => ({ ...prev, [english]: isChecked }));
-  };
+  const {
+    userSettingsTripTypes,
+    loading,
+    error,
+    setUserSettingsSelectedPlaces,
+  } = useUser();
 
   const handleTripTypeCheckboxChange = (tripType, isChecked) => {
     setSelectedTripTypes((prev) => ({ ...prev, [tripType]: isChecked }));
+  };
+
+  const handleMyPlacesChange = (updatedPlaces) => {
+    setPlacesObjet(updatedPlaces);
+    console.log("places 1: ", placesObjet);
   };
 
   const handleSubmit = (event) => {
@@ -61,15 +53,15 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
 
     const totalTravelMinutes = travelHours * 60 + travelMinutes;
 
-    const selectedPlaceNames = availablePlaces
-      .filter((place) => selectedPlacesForTrip[place.english])
-      .map((place) => place.hebrew);
+    const selectedPlacesForTrip = placesObjet.map((place) => place.english);
+    // console.log("places 1: ", placesObjet);
+    // console.log("places 2: ", selectedPlacesForTrip);
 
+    setUserSettingsSelectedPlaces(placesObjet);
     const filterParams = {
       selectedPlacesForTrip,
       selectedTypes,
       totalTravelMinutes,
-      selectedPlaceNames,
       includeVisited,
       transportMode,
     };
@@ -86,12 +78,12 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
   };
 
   const resetSettings = () => {
-    setSelectedPlacesForTrip({});
     setSelectedTripTypes({});
     setTravelHours(0);
     setTravelMinutes(0);
     setIncludeVisited(false);
-    setTransportMode('driving');
+    setTransportMode("driving");
+    setPlacesObjet([]);
   };
 
   const handleClose = () => {
@@ -100,13 +92,13 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
   };
 
   if (loading) return <div>טוען...</div>;
-  if (error) return <div>שגיאה בטעינת הנתונים: {error.message}</div>;
+  if (error) return <div>שגיאה בטעינת הנתונים</div>;
 
   const transportModes = [
-    { value: 'driving', label: <CarFront color="block"/> },
-    { value: 'walking', label: <PersonWalking color="block"/> },
-    { value: 'bicycling', label: <Bicycle color="block"/> },
-    { value: 'transit', label: <BusFront color="block"/> },
+    { value: "driving", label: <CarFront color="block" /> },
+    { value: "walking", label: <PersonWalking color="block" /> },
+    { value: "bicycling", label: <Bicycle color="block" /> },
+    { value: "transit", label: <BusFront color="block" /> },
   ];
 
   return (
@@ -116,7 +108,7 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
       placement={isMobile ? "bottom" : "end"}
       style={{
         textAlign: "end",
-        height: isMobile? "90%": "100%"
+        height: isMobile ? "90%" : "100%",
       }}
     >
       <Offcanvas.Header closeButton>
@@ -131,7 +123,7 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
                   <Form.Label style={{ direction: "rtl" }}>
                     זמן נסיעה מקסימלי:
                   </Form.Label>
-                  <InputGroup >
+                  <InputGroup>
                     <Form.Control
                       type="number"
                       value={travelHours}
@@ -139,19 +131,22 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
                       min="0"
                       max="24"
                       color="bold"
-                      style={{borderColor: '#0d6efd'}}
+                      style={{ borderColor: "#0d6efd" }}
                     />
-                    <InputGroup.Text style={{borderColor: '#0d6efd'}}>:שעות</InputGroup.Text>
+                    <InputGroup.Text style={{ borderColor: "#0d6efd" }}>
+                      :שעות
+                    </InputGroup.Text>
                     <Form.Control
                       type="number"
-                      style={{borderColor: '#0d6efd'}}
+                      style={{ borderColor: "#0d6efd" }}
                       value={travelMinutes}
                       onChange={(e) => setTravelMinutes(Number(e.target.value))}
                       min="0"
                       max="59"
-                      
                     />
-                    <InputGroup.Text style={{borderColor: '#0d6efd'}}>:דקות</InputGroup.Text>
+                    <InputGroup.Text style={{ borderColor: "#0d6efd" }}>
+                      :דקות
+                    </InputGroup.Text>
                   </InputGroup>
                 </Form.Group>
               </Col>
@@ -160,14 +155,19 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
             <Row className="mb-3">
               <Col xs={10}>
                 <Form.Group controlId="formTransportMode">
-                  <Form.Label style={{ direction: "rtl" }}>בחר סוג תחבורה:</Form.Label>
+                  <Form.Label style={{ direction: "rtl" }}>
+                    בחר סוג תחבורה:
+                  </Form.Label>
                   <ButtonGroup className="d-flex">
                     {transportModes.map((mode) => (
                       <Button
                         key={mode.value}
-                        variant={transportMode === mode.value ? "primary" : "outline-primary"}
+                        variant={
+                          transportMode === mode.value
+                            ? "primary"
+                            : "outline-primary"
+                        }
                         onClick={() => setTransportMode(mode.value)}
-                        
                       >
                         {mode.label}
                       </Button>
@@ -197,49 +197,14 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
               </Col>
             </Row>
 
-            <Row>
-              <Col xs={12}>
-                <p
-                  style={{
-                    fontWeight: "bold",
-                    lineHeight: "1",
-                    fontSize: "1.2em",
-                    marginTop: "20px",
-                    textAlign: "center",
-                  }}
-                >
-                  בחר מקומות בקרבת היעד{" "}
-                </p>
-              </Col>
+            <Row style={{ marginTop: "20px", marginBottom: "40px" }}>
               <Col xs={10} style={{ maxHeight: "30vh", overflowY: "auto" }}>
-                {availablePlaces.map(({ hebrew, english }) => (
-                  <Form.Check
-                    key={english}
-                    type="switch"
-                    id={`trip-${english}`}
-                    label={hebrew}
-                    checked={selectedPlacesForTrip[english] || false}
-                    onChange={(e) =>
-                      handlePlaceCheckboxChange(english, e.target.checked)
-                    }
-                  />
-                ))}
-                {availablePlaces.length === 0 && (
-                  <p
-                    style={{
-                      backgroundColor: "#FFE6E6",
-                      borderRadius: "10px",
-                      direction: "rtl",
-                    }}
-                  >
-                    אין מקומות זמינים. אנא בחר העדפות בהגדרות.
-                  </p>
-                )}
+                <PlacesFotTrip onMyPlacesChange={handleMyPlacesChange} />
               </Col>
             </Row>
 
             <Row>
-              <Col xs={12}>
+              <Col xs={10}>
                 <p
                   style={{
                     fontWeight: "bold",
@@ -258,7 +223,7 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
                   overflowY: "auto",
                 }}
               >
-                {availableTripTypes.map((tripType) => (
+                {userSettingsTripTypes.map((tripType) => (
                   <Form.Check
                     key={tripType}
                     type="switch"
@@ -270,11 +235,11 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
                     }
                   />
                 ))}
-                {availableTripTypes.length === 0 && (
+                {userSettingsTripTypes.length === 0 && (
                   <p
                     style={{ backgroundColor: "#FFE6E6", borderRadius: "10px" }}
                   >
-                    אין סוגי טיול זמינים. אנא בחר העדפות בהגדרות.
+                    אין סוגי טיול זמינים. ניתן להוסיף העדפות בהגדרות.
                   </p>
                 )}
               </Col>
@@ -292,6 +257,6 @@ const  TargetSearch = ({ show, onHide, onFilterChange }) => {
       </Offcanvas.Body>
     </Offcanvas>
   );
-}
+};
 
 export default TargetSearch;

@@ -5,7 +5,7 @@ import { auth } from "../../firebaseConfig";
 
 const AuthProviderToken = ({ children }) => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("authToken");//authToken
 
   useEffect(() => {
     const checkToken = () => {
