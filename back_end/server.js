@@ -3,16 +3,16 @@ import cors from 'cors';
 
 
 import connectToDatabase from './db/connectToDb.js';
+
 import firebaseConfig from './services/authentication/firebaseConfig.js';
 import tokenAuth from './services/authentication/tokenAuth.js';
 import cookieParser from 'cookie-parser';
-
-
 import locationsRoute from './routes/locationsRoute.js';
 import user from './routes/usersRoute.js';
 import userLocationsRoute from './routes/userLocationsRoute.js';
 import userSettingsRoute from './routes/userSettingsRoute.js'
 import placesTypesServer from './db/services/placesType/placesTypesServer.js';
+
 console.log("turns ", Date.now());
 
 

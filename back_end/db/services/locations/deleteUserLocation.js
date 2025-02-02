@@ -2,10 +2,6 @@ import { Locations } from "../../schemas.js";
 
 
 const deleteUserLocation = async (userId, location) => {
-    if (!location || !userId) {
-        return { success: false, message: "Missing location or userId" };
-    };
-
     const locationDelete = location.target;
     try {
         const result = await Locations.updateOne({ userId }, { $pull: { items: { id: locationDelete.id } } });

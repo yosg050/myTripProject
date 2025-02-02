@@ -1,5 +1,11 @@
 import React, { useRef, useCallback } from "react";
-import { Button, Image, Container, OverlayTrigger, Tooltip } from "react-bootstrap";
+import {
+  Button,
+  Image,
+  Container,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { uploadImage } from "../DB/firebaseStorage";
 import { PlusCircleDotted } from "react-bootstrap-icons";
 
@@ -41,10 +47,14 @@ function LocationImage({ location, user, onImageUpload }) {
         <div className="d-flex flex-column align-items-center justify-content-center h-100">
           <OverlayTrigger
             placement="top"
-            overlay={<Tooltip>עדיין אין תמונה <br/> ניתן להוסיף תמונות שלך</Tooltip>}
+            overlay={
+              <Tooltip>
+                עדיין אין תמונה <br /> ניתן להוסיף תמונות שלך
+              </Tooltip>
+            }
           >
-            <Button variant="link"  onClick={handleButtonClick}  >
-              <PlusCircleDotted size={30}/>
+            <Button variant="link" onClick={handleButtonClick}>
+              <PlusCircleDotted size={30} />
             </Button>
           </OverlayTrigger>
           <input

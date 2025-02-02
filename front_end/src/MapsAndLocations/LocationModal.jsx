@@ -9,88 +9,17 @@ import {
   Row,
   Card,
 } from "react-bootstrap";
-import { doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { db } from "../../firebaseConfig";
-import { useAuth } from "../connections/AuthContext";
 import { Pin, Star, StarFill, StarHalf, Trash3 } from "react-bootstrap-icons";
 import LocationImage from "./LocationImage";
 import Navigation from "./Navigation";
 import Sharing from "../sharing/Sharing";
 import { useUser } from "../connections/UserProfile";
 import UserLocations from "../services/userLocations";
-// import UserLocations from "../services/userLocation";
 
 function LocationModal({ show, handleClose, location }) {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const { user } = useAuth();
   const { userSettingsSelectedPlaces, setUserLocations } = useUser();
-
-  const visitedTrue = useCallback(async () => {
-    if (!location?.id) {
-      console.error("Missing required fields for update");
-      return;
-    }
-
-    setUpdating(true);
-    try {
-      const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-
-      await updateDoc(locationRef, {
-        visit: true,
-        lastUpdated: new Date().toISOString(),
-      });
-
-      handleClose();
-    } catch (error) {
-      console.error("Error updating location:", error);
-    } finally {
-      setUpdating(false);
-    }
-  }, [user, location, handleClose]);
-
-  const visitedFalse = useCallback(async () => {
-    if (!user?.uid || !location?.id) {
-      console.error("Missing required fields for update");
-      return;
-    }
-
-    setUpdating(true);
-    try {
-      const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-
-      await updateDoc(locationRef, {
-        visit: false,
-        lastUpdated: new Date().toISOString(),
-      });
-
-      handleClose();
-    } catch (error) {
-      console.error("Error updating location:", error);
-    } finally {
-      setUpdating(false);
-    }
-  }, [user, location, handleClose]);
-
-  // const handleDelete = useCallback(async () => {
-  //   if (!user?.uid || !location?.id) {
-  //     console.error("Missing required fields for delete");
-  //     return;
-  //   }
-
-  //   setDeleting(true);
-  //   try {
-  //     const locationRef = doc(db, "Users", user.uid, "Locations", location.id);
-
-  //     await deleteDoc(locationRef);
-
-  //     handleClose();
-  //   } catch (error) {
-  //     console.error("Error deleting location:", error);
-  //   } finally {
-  //     setDeleting(false);
-  //   }
-  // }, [user, location, handleClose]);
 
   const handleDelete = async (location) => {
     console.log("location", location);
@@ -109,35 +38,38 @@ function LocationModal({ show, handleClose, location }) {
     }
   };
 
-  // const handleImageUpload = useCallback(
-  //   async (downloadURL) => {
-  //     if (!user?.uid || !location?.id) {
-  //       console.error("Missing required fields for image upload");
-  //       return;
-  //     }
-
-  //     try {
-  //       const locationRef = doc(
-  //         db,
-  //         "Users",
-  //         user.uid,
-  //         "Locations",
-  //         location.id
-  //       );
-  //       await updateDoc(locationRef, {
-  //         image: downloadURL,
-  //         lastUpdated: new Date().toISOString(),
-  //       });
-
-  //       handleClose();
-  //     } catch (error) {
-  //       console.error("Error updating location with new image:", error);
-  //     }
-  //   },
-  //   [user, location, handleClose]
-  // );
 
   if (!location) return null;
+  const visitedStatus = async () => {
+    setUpdating(true);
+    if (!location.visit) {
+
+      const data = { locationID: location.id, updatedFields: { visit: true } };
+      const response = await UserLocations("PATCH", data);
+      if (response.success) {
+        setUserLocations((locations) =>
+          locations.map((loc) =>
+            loc.id === location.id ? { ...loc, visit: true } : loc
+          )
+        );
+        location.visit = true;
+        setUpdating(false);
+      }
+    } else {
+      const data = { locationID: location.id, updatedFields: { visit: false } };
+      const response = await UserLocations("PATCH", data);
+      if (response.success) {
+        setUserLocations((locations) =>
+          locations.map((loc) =>
+            loc.id === location.id ? { ...loc, visit: false } : loc
+          )
+        );
+        location.visit = false;
+        setUpdating(false);
+      }
+    }
+    console.log(location.visit);
+  };
 
   const englishToHebrew = (type) => {
     if (userSettingsSelectedPlaces) {
@@ -391,7 +323,7 @@ function LocationModal({ show, handleClose, location }) {
             <Col>
               <LocationImage
                 location={location}
-                user={user}
+                // user={user}
                 // onImageUpload={handleImageUpload}
               />
             </Col>
@@ -412,16 +344,7 @@ function LocationModal({ show, handleClose, location }) {
 
         <Modal.Footer style={{ justifyContent: "center" }}>
           <Navigation location={location} />
-          {/* <Sharing location={location} /> */}
-          {/* <OverlayTrigger placement="bottom" overlay={<Tooltip>שתף</Tooltip>}>
-          <Button
-            variant="outline-warning"
-            // onClick={handleDelete}
-            disabled={deleting}
-            >
-            {deleting ? "משתף..." : <Share />}
-          </Button>
-        </OverlayTrigger> */}
+          <Sharing location={location} />
           <OverlayTrigger
             placement="bottom"
             overlay={<Tooltip>מחק מיקום</Tooltip>}
@@ -437,13 +360,13 @@ function LocationModal({ show, handleClose, location }) {
 
           {!location.visit && (
             <OverlayTrigger
-              placement="bottom"
+              placement="top"
               overlay={<Tooltip>ביקרתי פה</Tooltip>}
             >
               <Button
                 variant="outline-success"
-                onClick={visitedTrue}
-                disabled={updating}
+                onClick={visitedStatus}
+                // disabled={updating}
               >
                 {updating ? "מעדכן..." : <Pin />}
               </Button>
@@ -457,8 +380,8 @@ function LocationModal({ show, handleClose, location }) {
             >
               <Button
                 variant="outline-danger"
-                onClick={visitedFalse}
-                disabled={updating}
+                onClick={visitedStatus}
+                // disabled={updating}
               >
                 {updating ? "מעדכן..." : <Pin />}
               </Button>

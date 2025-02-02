@@ -8,8 +8,7 @@ const router = express.Router();
 
 
 router.post('/', async (req, res) => {
-    if (!req.userId) {
-  
+    if (!req.userId || !req.body) {
         return res.status(400).json({ error: "Missing values" });
     }
     const response = await postUserLocation(req.userId, req.body)
@@ -21,11 +20,11 @@ router.post('/', async (req, res) => {
 })
 
 router.delete('/', async (req, res) => {
-    if (!req.userId) {
+    if (!req.userId || !req.body) {
         return res.status(400).json({ error: "Missing values" });
     }
     const response = await deleteUserLocation(req.userId, req.body)
-    if (response.message){
+    if (response.message) {
         console.log("response.message", response.message);
     }
     if (response && response.message) {
@@ -36,11 +35,11 @@ router.delete('/', async (req, res) => {
 })
 
 router.patch('/', async (req, res) => {
-    if (!req.userId) {
+    if (!req.userId || !req.body) {
         return res.status(400).json({ error: "Missing values" });
     }
     const response = await patchUserLocation(req.userId, req.body)
-    if (response.message){
+    if (response.message) {
         console.log("response.message", response.message);
     }
     if (response && response.message) {
@@ -49,8 +48,6 @@ router.patch('/', async (req, res) => {
         return res.status(400).json({ error: response ? response.message : "Unknown error" })
     }
 })
-
-
 
 router.get('/', async (req, res) => {
     if (!req.userId) {

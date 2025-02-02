@@ -2,9 +2,6 @@ import { Locations } from "../../schemas.js";
 
 
 const postUserLocation = async (userId, newLocation) => {
-    if (!newLocation || !userId) {
-        return { success: false, message: "Missing location or userId" };
-    };
     const location = newLocation.target;
     try {
         console.log("newLocation", location);

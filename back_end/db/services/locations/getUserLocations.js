@@ -3,9 +3,6 @@ import { Locations } from "../../schemas.js";
 
 const getUserLocations = async (userId) => {
 
-    if (!userId) {
-        throw new Error("Missing userId");
-    }
     try {
         const userLocations = await Locations.findOne({ userId });
         console.log("userLocations", userLocations)

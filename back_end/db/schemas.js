@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { v4 } from 'uuid';
 
 const userSchema = new mongoose.Schema({
     _uid: { type: String, required: true },
@@ -14,6 +15,7 @@ const userSchema = new mongoose.Schema({
     gender: { type: String, default: null },
     maritalStatus: { type: String, default: null },
     updatedDate: { type: Date, default: Date.now },
+    publicId: { type: String, default: () => v4() },
 });
 
 
