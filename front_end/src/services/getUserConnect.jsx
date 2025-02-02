@@ -1,8 +1,8 @@
 import { LOCAL_SERVER_URL } from "../../config";
 
-const getUserConnect = async (uid, email) => {
+const getUserConnect = async (uid, email, photoURL) => {
   try {
-    const url = `http://${LOCAL_SERVER_URL}/login/user?uid=${uid}&email=${email}`;
+    const url = `http://${LOCAL_SERVER_URL}/login/user?uid=${uid}&email=${email}&photoUrl=${photoURL}`;
     console.log(url);
 
     const response = await fetch(url, {

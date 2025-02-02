@@ -14,6 +14,9 @@ back_end/yarn-error.log*
 back_end/pnpm-debug.log*
 back_end/lerna-debug.log*
 
+
+back_end/spherical-plane-422009-d94887ec44aa.json
+
 # Logs
 front_end/logs
 front_end/*.log

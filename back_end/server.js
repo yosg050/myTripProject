@@ -43,10 +43,6 @@ app.use('/user', tokenAuth, user)
 app.use('/placesTypes', tokenAuth, placesTypesServer)
 
 
-// app.use('/UserLocations',tokenAuth, (req, res) => {
-//     res.json({message: "Hello World"})
-// })
-
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

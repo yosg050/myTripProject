@@ -26,6 +26,7 @@ const Sharing = ({ location }) => {
   const sharingStart = () => {
     
   }
+
   // const sharingStart = () => {
   //   let sharingUserName = " ";
   //   if (userProfileData.firstName && userProfileData.lastName) {
@@ -82,7 +83,7 @@ const Sharing = ({ location }) => {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title style={{ direction: "rtl", textAlign: "center" }}>
-            את מי לשתף בטיול שלי?
+            את מי לשתף את {location.name}?
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

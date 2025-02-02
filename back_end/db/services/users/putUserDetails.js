@@ -8,7 +8,7 @@ const putUserDetails = async (userId, details) => {
     
     try {
         const result = await User.updateOne({ _id: userId },
-            { $set: details.value, updatedDate: Date.now()}
+            { $set: details, updatedDate: Date.now()}
         );
         
         if (result.modifiedCount > 0) {

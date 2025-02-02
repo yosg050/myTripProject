@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
     maritalStatus: { type: String, default: null },
     updatedDate: { type: Date, default: Date.now },
     publicId: { type: String, default: () => v4() },
+    photoUrl: { type: String, default: null },
 });
 
 

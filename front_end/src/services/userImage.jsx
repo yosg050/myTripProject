@@ -1,15 +1,19 @@
 import { LOCAL_SERVER_URL } from "../../config";
 
-const UserDetails = async (methodType, details = null) => {
+const UserImage = async (methodType, newTarget = null) => {
+  
   if (methodType === "GET") {
     try {
-      const response = await fetch(`http://${LOCAL_SERVER_URL}/user/details`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://${LOCAL_SERVER_URL}/UserImage`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -22,11 +26,12 @@ const UserDetails = async (methodType, details = null) => {
       throw error;
     }
   } else {
-    if (details) {
-      console.log(details);
+    console.log("newTarget", newTarget);
+    
+    if (newTarget) {
       try {
         const response = await fetch(
-          `http://${LOCAL_SERVER_URL}/user/details`,
+          `http://${LOCAL_SERVER_URL}/UserImage`,
           {
             method: methodType,
             headers: {
@@ -34,7 +39,7 @@ const UserDetails = async (methodType, details = null) => {
             },
             credentials: "include",
             body: JSON.stringify({
-              value: details,
+              value: newTarget,
             }),
           }
         );
@@ -44,11 +49,11 @@ const UserDetails = async (methodType, details = null) => {
         } else {
           return {
             success: false,
-            message: "Error adding data",
+            message: "Error adding settings",
           };
         }
       } catch (error) {
-        console.error("Error adding data:", error);
+        console.error("Error adding settings:", error);
         return {
           success: false,
           message: "Error adding settings",
@@ -60,4 +65,5 @@ const UserDetails = async (methodType, details = null) => {
   }
 };
 
-export default UserDetails;
+
+export default UserImage;

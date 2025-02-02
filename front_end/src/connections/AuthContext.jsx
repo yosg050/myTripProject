@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setLoading(false);
       if (user) {
-        console.log(`User UID: ${user.uid}`);
+        console.log(`User UID: ${user.uid}`);        
   
       }
     });

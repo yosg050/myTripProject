@@ -22,7 +22,8 @@ const SignIn = () => {
 
       const uid = result.user.uid;
       const email = result.user.email;
-      const userData = getUserConnect(uid, email);
+      const photoUrl = result.user.photoURL;
+      const userData = getUserConnect(uid, email, photoUrl);
 
       if (userData.error) {
         console.log("Failed to fetch user");
