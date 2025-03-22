@@ -3,7 +3,7 @@ import { LOCAL_SERVER_URL } from "../../config";
 const UserDetails = async (methodType, details = null) => {
   if (methodType === "GET") {
     try {
-      const response = await fetch(`http://${LOCAL_SERVER_URL}/user/details`, {
+      const response = await fetch(`http://${LOCAL_SERVER_URL}/user`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -26,7 +26,7 @@ const UserDetails = async (methodType, details = null) => {
       console.log(details);
       try {
         const response = await fetch(
-          `http://${LOCAL_SERVER_URL}/user/details`,
+          `http://${LOCAL_SERVER_URL}/user`,
           {
             method: methodType,
             headers: {

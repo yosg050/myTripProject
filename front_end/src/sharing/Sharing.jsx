@@ -9,7 +9,8 @@ import {
 import { Send, Share } from "react-bootstrap-icons";
 import { useAuth } from "../connections/AuthContext";
 import { useUserProfile } from "../connections/GetUserDate";
-import searchUsers from "./searchUsers";
+// import searchUsers from "./searchUsers";
+import UsersIndex from "../services/usersIndex";
 
 const Sharing = ({ location }) => {
   console.log("sharing: ", location);
@@ -53,7 +54,7 @@ const Sharing = ({ location }) => {
     setSearchValue(value);
 
     if (value.trim()) {
-      const users = await searchUsers(value);
+      const users = await UsersIndex(value);
       setResults(users);
       console.log(users);
     } else {

@@ -13,7 +13,7 @@ dotenv.config();
 const router = express.Router();
 
 router.get('/user', async (req, res) => {
-    const { uid, email , photoUrl} = req.query;
+    const { uid, email, photoUrl } = req.query;
     if (!uid || !email || !photoUrl) {
         return res.status(400).json({ error: "Missing values" });
     }
@@ -33,7 +33,7 @@ router.get('/user', async (req, res) => {
     }
     console.log("userConnect", user);
     userPhoto(photoUrl, user._id)
-    
+
 
     const payload = { uid: user._uid, email: user.email }
     const secret = process.env.JWT_TOKEN;
@@ -44,12 +44,11 @@ router.get('/user', async (req, res) => {
     res.status(200).json({ token })
 });
 
-router.get('/details', async (req, res) => {
+
+router.get('/', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
-    // console.log(req.body);
-
     const userData = await getUserDetails(req.userId)
 
     if (userData) {
@@ -61,7 +60,7 @@ router.get('/details', async (req, res) => {
     }
 })
 
-router.put('/details', async (req, res) => {
+router.put('/', async (req, res) => {
     if (!req.userId) {
         return res.status(400).json({ error: "Missing values" });
     }
