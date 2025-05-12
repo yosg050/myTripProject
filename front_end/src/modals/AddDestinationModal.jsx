@@ -52,18 +52,18 @@ const AddDestinationModal = ({ show, onHide }) => {
 
   const handleLocationAdded = (result) => {
     if (!result.success || !selectedPlace) return;
-
+    const newPlace = result.updatedPlace
     try {
       const temporaryValue = {
-        id: selectedPlace.place_id,
-        address: selectedPlace.address || "",
-        latitude: selectedPlace.latitude || 0,
-        longitude: selectedPlace.longitude || 0,
-        name: selectedPlace.name || "",
-        notes: selectedPlace.notes || "",
-        tripTypes: Array.isArray(selectedPlace.tripTypes)
-          ? selectedPlace.tripTypes
-          : [selectedPlace.tripTypes].filter(Boolean),
+        id: newPlace.place_id,
+        address: newPlace.address || "",
+        latitude: newPlace.latitude || 0,
+        longitude: newPlace.longitude || 0,
+        name: newPlace.name || "",
+        notes: newPlace.notes || "",
+        tripTypes: Array.isArray(newPlace.tripTypes)
+          ? newPlace.tripTypes
+          : [newPlace.tripTypes].filter(Boolean),
         visit: false,
         createdDate: Date.now(),
       };

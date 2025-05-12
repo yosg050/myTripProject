@@ -6,10 +6,11 @@ import {
   OverlayTrigger,
   Tooltip,
 } from "react-bootstrap";
-import { Send, Share } from "react-bootstrap-icons";
+import { VscSend } from "react-icons/vsc";
+import { LuShare2 } from "react-icons/lu";
+
 import { useAuth } from "../connections/AuthContext";
 import { useUserProfile } from "../connections/GetUserDate";
-// import searchUsers from "./searchUsers";
 import UsersIndex from "../services/usersIndex";
 
 const Sharing = ({ location }) => {
@@ -25,7 +26,7 @@ const Sharing = ({ location }) => {
 
   const usersSend = [];
   const sharingStart = () => {
-    
+
   }
 
   // const sharingStart = () => {
@@ -76,18 +77,20 @@ const Sharing = ({ location }) => {
 
   return (
     <>
-      <OverlayTrigger placement="bottom" overlay={<Tooltip>שתף</Tooltip>}>
-        <Button variant="outline-warning" onClick={handleDelete}>
-          <Share />
+      <OverlayTrigger placement="top" overlay={<Tooltip>שתף</Tooltip>}>
+        <Button variant="outline-info" onClick={handleDelete}>
+        <LuShare2 />
+
         </Button>
       </OverlayTrigger>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} centered>
+
         <Modal.Header closeButton>
           <Modal.Title style={{ direction: "rtl", textAlign: "center" }}>
-            את מי לשתף את {location.name}?
+            עם לשתף את {location.name}?
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ minHeight: "350px" }}>
           <input
             type="text"
             value={searchValue}
@@ -148,9 +151,11 @@ const Sharing = ({ location }) => {
             </ListGroup>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleClose}>
-            <Send />
+        <Modal.Footer style={{ justifyContent: "center" }}>
+          <Button variant="primary" onClick={handleClose}
+          >
+            <VscSend />
+
           </Button>
         </Modal.Footer>
       </Modal>

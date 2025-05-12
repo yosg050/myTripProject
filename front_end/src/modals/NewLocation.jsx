@@ -31,9 +31,10 @@ const NewLocation = ({ newPlace, onLocationAdded }) => {
       notes: notes,
     };
     console.log(updatedPlace);
+
     const result = await UserLocations("POST", updatedPlace);
     if (result.success) {
-      onLocationAdded?.({ success: true });
+      onLocationAdded?.({ success: true, updatedPlace: updatedPlace});
     } else {
       onLocationAdded?.({ success: false });
     }

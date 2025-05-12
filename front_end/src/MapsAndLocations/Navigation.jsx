@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
-import { OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
-import { Compass } from "react-bootstrap-icons";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+
 import Button from "react-bootstrap/Button";
 import Overlay from "react-bootstrap/Overlay";
 import Popover from "react-bootstrap/Popover";
 import { FaWaze } from "react-icons/fa";
 import { TbBrandGoogleMaps } from "react-icons/tb";
+import { IoNavigateCircleOutline } from "react-icons/io5";
+import { TbNavigationPin } from "react-icons/tb";
 
 function Navigation({ location, onButtonClick }) {
   const [show, setShow] = useState(false);
@@ -45,13 +47,15 @@ function Navigation({ location, onButtonClick }) {
 
   return (
     <div ref={ref}>
-      <OverlayTrigger placement="bottom" overlay={<Tooltip>נווט ליעד</Tooltip>}>
+      <OverlayTrigger placement="top" overlay={<Tooltip>נווט ליעד</Tooltip>}>
         <Button
           variant="outline-info"
           onClick={handleClick}
           disabled={deleting}
         >
-          <Compass />
+          <TbNavigationPin size={16} />
+
+
         </Button>
       </OverlayTrigger>
 
@@ -65,20 +69,22 @@ function Navigation({ location, onButtonClick }) {
         onHide={handleHide}
       >
         <Popover id="popover-contained">
-          <Popover.Header style={{ fontSize: "1em", lineHeight: "0.4" ,  textAlign: 'center'}}>
+          <Popover.Header style={{ fontSize: "1em", lineHeight: "0.4", textAlign: 'center' }}>
             נווט ליעד
           </Popover.Header>
           <Popover.Body>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>Waze</Tooltip>}>
-            <Button variant="link" onClick={openWaze}>
-              <FaWaze size={24} />
-            </Button>
-          </OverlayTrigger>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>Google Maps</Tooltip>}>
-            <Button variant="link" onClick={openGoogleMaps}>
-              <TbBrandGoogleMaps size={24} />
-            </Button>
-          </OverlayTrigger>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Waze</Tooltip>}>
+              <Button variant="link" onClick={openWaze}>
+                <FaWaze size={24} />
+              </Button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Google Maps</Tooltip>}>
+              <Button variant="link" onClick={openGoogleMaps}>
+                <TbBrandGoogleMaps size={24} />
+                <IoNavigateCircleOutline />
+
+              </Button>
+            </OverlayTrigger>
           </Popover.Body>
         </Popover>
       </Overlay>

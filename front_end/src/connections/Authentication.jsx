@@ -32,6 +32,8 @@ const SignIn = () => {
       console.log("userData", userData);
 
       const idToken = await result.user.getIdToken();
+      const jwtToken = await getUserConnect(uid, email, photoUrl); 
+      localStorage.setItem("authToken", jwtToken);
       localStorage.setItem("authToken", idToken);
 
       console.log("idToken", idToken);
